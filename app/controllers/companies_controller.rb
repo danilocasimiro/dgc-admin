@@ -1,8 +1,20 @@
 # frozen_string_literal: true
 
 class CompaniesController < AddressableController
+  include UserContext
+
+  def index
+    @models = model_class.with_user_id(current_user.id)
+
+    render json: @models
+  end
+
+  def model
+    @model = Company.with_user_id(current_user.id).find(params[:id])
+  end
+
   def model_params
-    params.require(:company).permit(:user_id, :email_address)
+    params.require(:company).permit(:name).merge(tenant_id: current_user.id)
   end
 
   def addressable_params

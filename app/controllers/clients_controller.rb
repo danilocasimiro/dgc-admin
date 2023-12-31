@@ -1,17 +1,34 @@
 # frozen_string_literal: true
 
 class ClientsController < AddressableController
+  include CompanyContext
+
+  def index
+    @models = Client.with_company_id(current_company_id)
+
+    render json: @models
+  end
+
   def create
     super
-    @model.associate_with_company(company_id_param) if @model.valid?
+    client = Client.create!(client_params.merge(user_id: @model.id))
+    client.associate_with_company(current_company_id)
   end
 
   def model_params
-    params.require(:client).permit(:name, :email_address, :company_id)
+    params.permit(:email_address, :password)
   end
 
-  def company_id_param
-    params.require(:company_id)
+  def model_class
+    User
+  end
+
+  def model
+    @model = Client.with_company_id(current_company_id).find(params[:id])
+  end
+
+  def client_params
+    params.require(:client).permit(:name)
   end
 
   def addressable_params

@@ -7,20 +7,12 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  has_one :addressable
+  has_one :client, inverse_of: :user
+  has_one :tenant, inverse_of: :user
 
-  has_many :companies, inverse_of: :user
+  has_many :companies, through: :tenant
 
   validates :email_address, presence: true, uniqueness: true
-
-  before_destroy :validate_before_destroy
-
-  def validate_before_destroy
-    return if companies.empty?
-
-    errors.add(:base, 'Não é possível excluir este usuario por conta que ele possui empresas associadas.')
-    throw(:abort)
-  end
 
   def password
     @password ||= Password.new(password_digest)

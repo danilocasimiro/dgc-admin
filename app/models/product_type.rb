@@ -7,6 +7,8 @@ class ProductType < ApplicationRecord
 
   before_destroy :validate_before_destroy
 
+  scope :with_company_id, ->(company_id) { where(company_id:) }
+
   def validate_before_destroy
     return if products.empty?
 
