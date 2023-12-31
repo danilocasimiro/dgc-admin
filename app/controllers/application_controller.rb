@@ -10,7 +10,7 @@ class ApplicationController < ActionController::API
     token = header&.split(' ')&.last
 
     begin
-      decoded = JWT.decode(token, 'your_secret_key', true, algorithm: 'HS256')
+      decoded = JWT.decode(token, Figaro.env.jwt_secret, true, algorithm: 'HS256')
       @current_user = User.find_by(email_address: decoded.first['email_address'])
     rescue JWT::DecodeError
       render json: { error: 'Token inválido' }, status: :unauthorized

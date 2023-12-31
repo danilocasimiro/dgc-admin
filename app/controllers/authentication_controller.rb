@@ -16,13 +16,13 @@ class AuthenticationController < ApplicationController
     validate_company(decoded_token)
     decoded_token.push(company_id: params[:company_id])
 
-    render json: JWT.encode(decoded_token, 'your_secret_key', 'HS256')
+    render json: JWT.encode(decoded_token, Figaro.env.jwt_secret, 'HS256')
   end
 
   private
 
   def generate_token
-    JWT.encode({ email_address: params[:email_address] }, 'your_secret_key', 'HS256')
+    JWT.encode({ email_address: params[:email_address] }, Figaro.env.jwt_secret, 'HS256')
   end
 
   def fetch_jwt
@@ -30,7 +30,7 @@ class AuthenticationController < ApplicationController
     token = header&.split(' ')&.last
 
     begin
-      JWT.decode(token, 'your_secret_key', true, algorithm: 'HS256')
+      JWT.decode(token, Figaro.env.jwt_secret, true, algorithm: 'HS256')
     rescue JWT::DecodeError
       render json: { error: 'Token inválido' }, status: :unauthorized
     end
