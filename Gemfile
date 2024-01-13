@@ -6,6 +6,7 @@ ruby '3.3.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'bcrypt'
+gem 'faker'
 gem 'figaro'
 gem 'jwt'
 gem 'rails', '~> 7.1.2'
@@ -15,6 +16,7 @@ gem 'mysql2', '~> 0.5'
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem 'puma', '>= 5.0'
+gem 'rack-cors'
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem 'jbuilder'

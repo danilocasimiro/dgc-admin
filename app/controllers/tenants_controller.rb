@@ -1,20 +1,53 @@
 # frozen_string_literal: true
 
-class TenantsController < AddressableController
+class TenantsController < BaseController
   include UserContext
 
-  def index
-    @models = Tenant.with_user_id(current_user.id)
+  before_action :set_resource, only: %i[show update destroy]
 
-    render json: @models
+  def index
+    @models =
+      current_user.admin? ? model_class.all : model_class.with_user_id(current_user.id)
+
+    render json: @models.as_json(include: include_associations)
+  end
+
+  def show
+    render json: @model.as_json(include: include_associations)
   end
 
   def create
-    super
-    Tenant.create!(tenant_params.merge(user_id: @model.id))
+    @user = User.create!(user_params)
+    @model = @user.build_tenant(tenant_params)
+    @model.friendly_id = @model.generate_friendly_id
+
+    if @model.save
+      render json: @model
+    else
+      render json: errors
+    end
   end
 
-  def model_params
+  def update
+    @model.update(tenant_params)
+    @model.user.update(user_params) if user_params
+
+    render json: @model.as_json(include: %i[user])
+  end
+
+  def destroy
+    @model.destroy
+
+    if @model.errors.present?
+      render json: errors
+    else
+      head :ok
+    end
+  end
+
+  private
+
+  def user_params
     params.permit(:email_address, :password)
   end
 
@@ -22,17 +55,12 @@ class TenantsController < AddressableController
     params.require(:tenant).permit(:name)
   end
 
-  def model_class
-    User
-  end
-
-  def model
-    @model = Tenant.with_user_id(current_user.id).find(params[:id])
-  end
-
-  def addressable_params
-    params
-      .permit(:street, :number, :neighborhood, :city, :state)
-      .merge({ addressable_id: params[:tenant_id], addressable_type: 'User' })
+  def set_resource
+    @model =
+      if current_user.admin?
+        model_class.find(params[:id])
+      else
+        model_class.with_user_id(current_user.id).find(params[:id])
+      end
   end
 end

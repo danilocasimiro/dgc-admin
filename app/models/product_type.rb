@@ -15,4 +15,10 @@ class ProductType < ApplicationRecord
     errors.add(:base, 'Não é possível excluir este tipo de produto por conta que ele possui produtos associados.')
     throw(:abort)
   end
+
+  class << self
+    def relation_map
+      %i[products]
+    end
+  end
 end

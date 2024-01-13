@@ -21,6 +21,13 @@ module Ecommece
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
+    #
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'localhost:3000' # ou especifique seus domínios permitidos
+        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options]
+      end
+    end
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 

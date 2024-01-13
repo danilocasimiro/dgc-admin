@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Company < ApplicationRecord
-  has_one :addressable
+  has_one :address, as: :addressable, dependent: :destroy
 
   belongs_to :tenant, inverse_of: :companies
 
@@ -24,5 +24,11 @@ class Company < ApplicationRecord
     return unless errors.empty?
 
     product_types.destroy_all
+  end
+
+  class << self
+    def relation_map
+      %i[clients tenant address]
+    end
   end
 end

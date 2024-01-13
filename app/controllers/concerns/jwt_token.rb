@@ -15,9 +15,23 @@ module JwtToken
     end
   end
 
-  def generate_token(user_id, email_address)
-    JWT.encode({ user: { email_address:, id: user_id } }, Figaro.env.jwt_secret, 'HS256')
+  # rubocop:disable Metrics/MethodLength
+  def generate_token(user, company_id = nil)
+    company = Company.find(company_id) if company_id
+
+    JWT.encode({
+                 user: {
+                   email_address: user.email_address,
+                   friendly_id: user.friendly_id,
+                   name: user.name,
+                   id: user.id,
+                   type: user.type,
+                   company_name: company&.name,
+                   company_id:
+                 }
+               }, Figaro.env.jwt_secret, 'HS256')
   end
+  # rubocop:enable Metrics/MethodLength
 
   def user_authenticate?
     feth_decoded_jwt
@@ -28,7 +42,7 @@ module JwtToken
   end
 
   def current_company_id
-    feth_decoded_jwt.find { |token| token.key? 'company_id' }&.values&.first
+    feth_decoded_jwt.first.dig('user', 'company_id')
   end
 
   def current_user

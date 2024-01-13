@@ -5,14 +5,20 @@ require 'bcrypt'
 class User < ApplicationRecord
   include BCrypt
 
+  attr_accessor :company_id
+
   has_secure_password
 
-  has_one :client, inverse_of: :user
-  has_one :tenant, inverse_of: :user
+  has_one :client, inverse_of: :user, dependent: :destroy
+  has_one :tenant, inverse_of: :user, dependent: :destroy
 
   has_many :companies, through: :tenant
 
   validates :email_address, presence: true, uniqueness: true
+
+  def admin?
+    id == 1
+  end
 
   def password
     @password ||= Password.new(password_digest)
@@ -21,6 +27,18 @@ class User < ApplicationRecord
   def password=(new_password)
     @password = Password.create(new_password)
     self.password_digest = @password
+  end
+
+  def name
+    tenant ? tenant.name : client.name
+  end
+
+  def type
+    tenant ? tenant.class : client.class
+  end
+
+  def friendly_id
+    tenant ? tenant.friendly_id : client.friendly_id
   end
 
   class << self

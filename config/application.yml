@@ -1,4 +1,4 @@
-jwt_secret: 'any_jwt_secret'
-db_username: any_username
-db_password: any_password
-db_host: any_host
+jwt_secret: 'my_secret_key'
+db_username: danilo
+db_password: root
+db_host: 172.21.0.1
