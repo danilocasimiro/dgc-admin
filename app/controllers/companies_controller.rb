@@ -18,7 +18,7 @@ class CompaniesController < BaseController
   def update
     if @model.update(company_params)
       if addressable_params
-        @model.address ? @model.address.update(addressable_params) : store_address
+        @model.address ? @model.address.update(addressable_params[:address]) : store_address
       end
 
       render json: @model
@@ -59,14 +59,14 @@ class CompaniesController < BaseController
   end
 
   def addressable_params
-    params.permit(:street, :number, :neighborhood, :city, :state, :zip_code)
+    params.permit(address: %i[street number neighborhood city state zip_code])
   end
 
   def store_address
-    if addressable_params.present?
-      Address.create(
-        addressable_params.merge({ addressable_id: @model.id, addressable_type: 'Company' })
-      )
-    end
+    return unless addressable_params.present?
+
+    Address.create(
+      addressable_params[:address].merge({ addressable_id: @model.id, addressable_type: 'Company' })
+    )
   end
 end
