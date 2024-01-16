@@ -21,7 +21,7 @@ class Tenant < ApplicationRecord
 
   class << self
     def relation_map
-      %i[companies]
+      %i[companies user]
     end
   end
 end
