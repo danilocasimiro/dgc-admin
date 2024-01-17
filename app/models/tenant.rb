@@ -5,13 +5,30 @@ class Tenant < ApplicationRecord
 
   belongs_to :user, inverse_of: :tenant, dependent: :destroy
 
+  has_one :trial, inverse_of: :tenant, dependent: :destroy
+
   has_many :companies, inverse_of: :tenant
   has_many :subscription_plans, inverse_of: :tenant
 
   before_destroy :validate_before_destroy
 
+  after_create :create_trial
+
   scope :with_user_id, ->(user_id) { where(user_id:) }
   scope :friendly_id_conditions, -> {}
+
+  private
+
+  def create_trial
+    transaction do
+      current_date = Date.today
+      build_trial({ start_at: current_date, end_at: current_date.next_month }).save!
+    rescue ActiveRecord::RecordInvalid => e
+      # Tratar exceção se algo der errado na criação do outro modelo
+      errors.add(:base, "Erro ao criar dado na outra tabela: #{e.message}")
+      raise ActiveRecord::Rollback
+    end
+  end
 
   def validate_before_destroy
     return if companies.empty?
