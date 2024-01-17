@@ -41,6 +41,12 @@ class User < ApplicationRecord
     tenant ? tenant.friendly_id : client.friendly_id
   end
 
+  def allow_access?
+    return true unless tenant
+
+    Date.today < tenant.trial.end_at || tenant&.current_subscription
+  end
+
   class << self
     def authenticate(email_address, password)
       user = find_by(email_address:)
