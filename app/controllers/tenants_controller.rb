@@ -4,6 +4,7 @@ class TenantsController < BaseController
   include UserContext
 
   before_action :set_resource, only: %i[show update destroy]
+  before_action :user_authenticate?, except: %i[create]
 
   def index
     @models =
