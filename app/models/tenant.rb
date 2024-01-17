@@ -6,6 +6,7 @@ class Tenant < ApplicationRecord
   belongs_to :user, inverse_of: :tenant, dependent: :destroy
 
   has_many :companies, inverse_of: :tenant
+  has_many :subscription_plans, inverse_of: :tenant
 
   before_destroy :validate_before_destroy
 
