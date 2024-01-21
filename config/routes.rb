@@ -8,12 +8,14 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   resources :tenants
-  resources :subscription_plans, only: %i[index]
-  resources :subscriptions, only: %i[index]
+  resources :subscription_plans, only: %i[index create update]
+  resources :users, only: %i[show]
+  resources :subscriptions, only: %i[index create]
   resources :companies
   resources :clients
   resources :product_types
   resources :products
+  resources :employees
   post '/authenticate', to: 'authentication#authenticate'
   post '/authenticate/company_auth/:company_id', to: 'authentication#company_auth'
 
