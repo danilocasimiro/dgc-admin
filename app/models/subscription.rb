@@ -6,9 +6,25 @@ class Subscription < ApplicationRecord
 
   scope :with_tenant_id, ->(tenant_id) { where(tenant_id:) }
 
-  enum status: %i[active inactive suspended]
+  enum status: %i[active inactive suspended pending]
+
+  before_save :add_start_at, :add_end_at
 
   validates :status, inclusion: { in: Subscription.statuses.keys }
+
+  private
+
+  def add_start_at
+    self.start_at = Date.today
+  end
+
+  def add_end_at
+    self.end_at = Date.today.advance(months: fetch_activation_months)
+  end
+
+  def fetch_activation_months
+    SubscriptionPlan.select(:activation_months).find(subscription_plan_id).activation_months
+  end
 
   class << self
     def relation_map
