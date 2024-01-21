@@ -23,20 +23,19 @@ class ClientsController < BaseController
 
       render json: @model
     else
-      render json: errors
+      render json: { errors: }, status: :bad_request
     end
   end
 
   def create
     @user = User.create!(user_params)
     @model = model_class.new(client_params.merge(user_id: @user.id))
-    @model.friendly_id = @model.generate_friendly_id(current_company_id)
 
     if @model.save && @model.associate_with_company(current_company_id)
       store_address
       render json: @model
     else
-      render json: errors
+      render json: { errors: }, status: :bad_request
     end
   end
 
@@ -44,7 +43,7 @@ class ClientsController < BaseController
     @model.destroy
 
     if @model.errors.present?
-      render json: errors
+      render json: { errors: }, status: :bad_request
     else
       head :ok
     end
@@ -69,10 +68,10 @@ class ClientsController < BaseController
   end
 
   def store_address
-    if addressable_params.present?
-      Address.create(
-        addressable_params.merge({ addressable_id: @model.id, addressable_type: 'Company' })
-      )
-    end
+    return unless addressable_params.present?
+
+    Address.create(
+      addressable_params.merge({ addressable_id: @model.id, addressable_type: 'Company' })
+    )
   end
 end

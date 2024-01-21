@@ -23,7 +23,7 @@ class CompaniesController < BaseController
 
       render json: @model
     else
-      render json: errors
+      render json: { errors: }, status: :bad_request
     end
   end
 
@@ -34,7 +34,7 @@ class CompaniesController < BaseController
       store_address
       render json: @model
     else
-      render json: errors
+      render json: { errors: }, status: :bad_request
     end
   end
 
@@ -42,7 +42,7 @@ class CompaniesController < BaseController
     @model.destroy
 
     if @model.errors.present?
-      render json: errors
+      render json: { errors: }, status: :bad_request
     else
       head :ok
     end
@@ -55,7 +55,7 @@ class CompaniesController < BaseController
   end
 
   def company_params
-    params.require(:company).permit(:name).merge(tenant_id: current_user.id)
+    params.require(:company).permit(:name).merge(tenant_id: current_user.profile_id)
   end
 
   def addressable_params

@@ -20,7 +20,7 @@ class ProductsController < BaseController
     if @model.save
       render json: @model
     else
-      render json: errors
+      render json: { errors: }, status: :bad_request
     end
   end
 
@@ -34,7 +34,7 @@ class ProductsController < BaseController
     @model.destroy
 
     if @model.errors.present?
-      render json: errors
+      render json: { errors: }, status: :bad_request
     else
       head :ok
     end
