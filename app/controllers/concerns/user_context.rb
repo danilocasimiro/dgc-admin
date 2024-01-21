@@ -11,7 +11,7 @@ module UserContext
   private
 
   def allow_access?
-    return unless current_user.tenant
+    return unless current_user.tenant?
 
     return if current_user.allow_access?
 

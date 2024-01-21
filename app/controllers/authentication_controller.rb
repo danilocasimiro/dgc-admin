@@ -5,8 +5,6 @@ class AuthenticationController < ApplicationController
     user = User.authenticate(params[:email_address], params[:password])
     if !user
       render json: { error: 'Credenciais inválidas.' }, status: :unauthorized
-    elsif user && !user.allow_access?
-      render json: { error: 'Conta inativa. Por favor, renove o seu plano.' }, status: :unauthorized
     else
       render json: generate_token(user)
     end

@@ -26,6 +26,8 @@ module JwtToken
                    name: user.name,
                    id: user.id,
                    type: user.type,
+                   expiration_date: user.expiration_date,
+                   subscription_status: subscription_status(user),
                    company_name: company&.name,
                    company_id:
                  }
@@ -52,5 +54,15 @@ module JwtToken
 
   def fetch_user_claim
     feth_decoded_jwt.find { |token| token.key? 'user' }
+  end
+
+  def subscription_status(user)
+    if user.is_a?(Tenant)
+      user.allow_access? ? 'active' : nil
+    elsif user.is_a?(Employee)
+      user.tenant.allow_access? ? 'active' : nil
+    else
+      'active'
+    end
   end
 end
