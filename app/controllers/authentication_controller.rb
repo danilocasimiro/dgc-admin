@@ -22,6 +22,6 @@ class AuthenticationController < ApplicationController
   private
 
   def validate_company
-    current_user.companies.find(params[:company_id])
+    current_user.profile.companies.find(params[:company_id])
   end
 end
