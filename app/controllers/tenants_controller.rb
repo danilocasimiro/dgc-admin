@@ -18,14 +18,13 @@ class TenantsController < BaseController
   end
 
   def create
-    @user = User.create!(user_params)
-    @model = @user.build_tenant(tenant_params)
-    @model.friendly_id = @model.generate_friendly_id
+    @model = model_class.create!(tenant_params)
+    @user = User.create!(user_params.merge({ profile_type: @model.class, profile_id: @model.id }))
 
     if @model.save
       render json: @model
     else
-      render json: errors
+      render json: { errors: }, status: :bad_request
     end
   end
 
@@ -40,7 +39,7 @@ class TenantsController < BaseController
     @model.destroy
 
     if @model.errors.present?
-      render json: errors
+      render json: { errors: }, status: :bad_request
     else
       head :ok
     end

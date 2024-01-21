@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
 class Client < ApplicationRecord
-  include FriendlyIdGenerator
-
   has_one :address, as: :addressable, dependent: :destroy
-
-  belongs_to :user, inverse_of: :client, dependent: :destroy
+  has_one :user, as: :profile, inverse_of: :profile, dependent: :destroy
 
   has_many :company_clients, inverse_of: :client, dependent: :destroy
   has_many :companies, through: :company_clients

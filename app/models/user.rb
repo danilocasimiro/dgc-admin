@@ -9,15 +9,18 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  has_one :client, inverse_of: :user, dependent: :destroy
-  has_one :tenant, inverse_of: :user, dependent: :destroy
-
-  has_many :companies, through: :tenant
+  belongs_to :profile, polymorphic: true, optional: true
 
   validates :email_address, presence: true, uniqueness: true
 
+  delegate :status, to: :last_subscription, prefix: true, allow_nil: true
+  delegate :last_subscription, to: :profile, allow_nil: true
+  delegate :name, to: :profile, prefix: false, allow_nil: true
+
+  before_create :set_friendly_id
+
   def admin?
-    id == 1
+    profile.nil?
   end
 
   def password
@@ -30,21 +33,42 @@ class User < ApplicationRecord
   end
 
   def name
-    tenant ? tenant.name : client.name
+    profile&.name || email_address
   end
 
   def type
-    tenant ? tenant.class : client.class
+    profile&.class || 'Admin'
   end
 
-  def friendly_id
-    tenant ? tenant.friendly_id : client.friendly_id
+  def tenant?
+    profile&.is_a?(Tenant)
+  end
+
+  def client?
+    profile&.is_a?(Client)
+  end
+
+  def employee?
+    profile&.is_a?(Employee)
   end
 
   def allow_access?
-    return true unless tenant
+    return true unless tenant?
 
-    Date.today < tenant.trial.end_at || tenant&.current_subscription
+    Date.today < profile.trial.end_at || profile&.current_subscription
+  end
+
+  def expiration_date
+    return nil unless tenant?
+
+    profile&.current_subscription&.end_at || profile&.trial&.end_at
+  end
+
+  private
+
+  def set_friendly_id
+    last_friendly_id = User.last&.friendly_id || 0
+    self.friendly_id = last_friendly_id + 1
   end
 
   class << self
@@ -52,6 +76,10 @@ class User < ApplicationRecord
       user = find_by(email_address:)
 
       user if user&.authenticate(password)
+    end
+
+    def relation_map
+      %i[profile]
     end
   end
 end

@@ -2,6 +2,7 @@
 
 class Company < ApplicationRecord
   has_one :address, as: :addressable, dependent: :destroy
+  has_one :employee, as: :employable, inverse_of: :company
 
   belongs_to :tenant, inverse_of: :companies
 
@@ -11,7 +12,7 @@ class Company < ApplicationRecord
 
   before_destroy :validate_before_destroy, :destroy_product_types_records
 
-  scope :with_user_id, ->(user_id) { joins(:tenant).where(tenant: { user_id: }) }
+  scope :with_user_id, ->(user_id) { joins(tenant: :user).where(user: { id: user_id }) }
 
   def validate_before_destroy
     return if clients.empty?

@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class Tenant < ApplicationRecord
-  include FriendlyIdGenerator
-
-  belongs_to :user, inverse_of: :tenant, dependent: :destroy
-
   has_one :trial, inverse_of: :tenant, dependent: :destroy
+  has_one :employee, as: :employable, inverse_of: :tenant
+  has_one :user, as: :profile, inverse_of: :profile, dependent: :destroy
 
   has_many :companies, inverse_of: :tenant
   has_many :subscriptions, inverse_of: :tenant
@@ -15,10 +13,13 @@ class Tenant < ApplicationRecord
   after_create :create_trial
 
   scope :with_user_id, ->(user_id) { where(user_id:) }
-  scope :friendly_id_conditions, -> {}
 
   def current_subscription
     subscriptions.where(status: :active).where('end_at >= ?', Time.zone.today).first
+  end
+
+  def last_subscription
+    subscriptions.last
   end
 
   private
