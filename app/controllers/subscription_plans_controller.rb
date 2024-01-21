@@ -8,4 +8,28 @@ class SubscriptionPlansController < BaseController
 
     render json: @models.as_json(include: include_associations)
   end
+
+  def update
+    if @model.update(subscription_plan_params)
+      render json: @model
+    else
+      render json: { errors: }, status: :bad_request
+    end
+  end
+
+  def create
+    @model = model_class.new(subscription_plan_params)
+
+    if @model.save
+      render json: @model
+    else
+      render json: { errors: }, status: :bad_request
+    end
+  end
+
+  private
+
+  def subscription_plan_params
+    params.require(:subscription_plan).permit(:name, :description, :activation_months, :price)
+  end
 end
