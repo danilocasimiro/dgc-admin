@@ -48,7 +48,7 @@ class TenantsController < BaseController
   private
 
   def user_params
-    params.require(:user).permit(%i[email_address password])
+    params.permit(%i[email_address password])
   end
 
   def tenant_params
