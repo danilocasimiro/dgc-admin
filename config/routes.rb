@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   resources :tenants
-  resources :subscription_plans, only: %i[index create update]
+  resources :subscription_plans
   resources :users, only: %i[show]
   resources :subscriptions, only: %i[index create]
   resources :companies
