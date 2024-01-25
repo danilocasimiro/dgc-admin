@@ -24,21 +24,23 @@ class EmployeesController < BaseController
   def create
     @model = model_class.new(employee_params.merge(employable_data))
 
-    if @model.save
-      render json: @model
-    else
-      render json: { errors: }, status: :bad_request
-    end
+    @model.save!
+    render json: @model
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotDestroyed => e
+    error_message = e.message
+    response.headers['X-Error-Message'] = error_message
+
+    render json: { error: error_message }, status: :unprocessable_entity
   end
 
   def destroy
-    @model.destroy
+    @model.destroy!
+    head :ok
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotDestroyed => e
+    error_message = e.message
+    response.headers['X-Error-Message'] = error_message
 
-    if @model.errors.present?
-      render json: { errors: }, status: :bad_request
-    else
-      head :ok
-    end
+    render json: { error: error_message }, status: :unprocessable_entity
   end
 
   private
@@ -55,7 +57,7 @@ class EmployeesController < BaseController
     employable_id = params.dig(:employee, :employable_id)
 
     if employable_id.present?
-      { employable_id:, employable_type: 'Company' }
+      { employable_id: 'dasdas', employable_type: 'Company' }
     else
       { employable_id: current_user.profile.id, employable_type: 'Tenant' }
     end
