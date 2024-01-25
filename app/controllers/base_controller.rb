@@ -1,17 +1,65 @@
 # frozen_string_literal: true
 
 class BaseController < ApplicationController
-  def model_class
-    controller_name.classify.constantize
+  include HandleErrors
+
+  def show
+    render json: @model.as_json(include: include_associations)
+  end
+
+  def create
+    @model = model_class.create!(permitted_params)
+
+    render json: @model
+  end
+
+  def update
+    @model.update!(permitted_params)
+
+    render json: @model
+  end
+
+  def destroy
+    @model.destroy!
+    head :ok
   end
 
   private
 
-  def errors
-    {
-      model: @model.class,
-      errors: @model.errors.full_messages
-    }
+  def model_class
+    controller_name.classify.constantize
+  end
+
+  def create_user
+    user = @model.build_user(user_params)
+    user.save!
+  end
+
+  def update_user
+    @model.user.update!(user_params) if user_params
+  end
+
+  def store_address
+    return unless addressable_params.present?
+
+    Address.create(
+      addressable_params[:address].merge({ addressable_id: @model.id, addressable_type: @model.class.capitalize })
+    )
+  end
+
+  def update_address
+    if addressable_params
+      @model.address ? 
+        @model.address.update!(addressable_params[:address]) : store_address
+    end
+  end
+
+  def user_params
+    throw NotImplementedError
+  end
+
+  def addressable_params
+    params.permit(:street, :number, :neighborhood, :city, :state, :zip_code)
   end
 
   def include_associations

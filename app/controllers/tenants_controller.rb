@@ -3,6 +3,8 @@
 class TenantsController < BaseController
   include UserContext
 
+  after_action :create_user, only: :create
+  after_action :update_user, only: :update
   before_action :set_resource, only: %i[show update destroy]
   before_action :user_authenticate?, except: %i[create]
 
@@ -13,45 +15,13 @@ class TenantsController < BaseController
     render json: @models.as_json(include: include_associations)
   end
 
-  def show
-    render json: @model.as_json(include: include_associations)
-  end
-
-  def create
-    @model = model_class.create!(tenant_params)
-    @user = User.create!(user_params.merge({ profile_type: @model.class, profile_id: @model.id }))
-
-    if @model.save
-      render json: @model
-    else
-      render json: { errors: }, status: :bad_request
-    end
-  end
-
-  def update
-    @model.update(tenant_params)
-    @model.user.update(user_params) if user_params
-
-    render json: @model.as_json(include: %i[user])
-  end
-
-  def destroy
-    @model.destroy
-
-    if @model.errors.present?
-      render json: { errors: }, status: :bad_request
-    else
-      head :ok
-    end
-  end
-
   private
 
   def user_params
     params.permit(%i[email_address password])
   end
 
-  def tenant_params
+  def permitted_params
     params.require(:tenant).permit(:name)
   end
 

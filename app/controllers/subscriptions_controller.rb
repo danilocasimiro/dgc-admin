@@ -10,20 +10,12 @@ class SubscriptionsController < BaseController
     render json: @models.as_json(include: include_associations)
   end
 
-  def create
-    @model = model_class.new(subscription_params)
-    @model.tenant_id = current_user.tenant.id
-    if @model.save
-      render json: @model
-    else
-      render json: { errors: }, status: :bad_request
-    end
-  end
-
   private
 
-  def subscription_params
-    params.require(:subscription).permit(:status, :subscription_plan_id)
+  def permitted_params
+    params.require(:subscription)
+      .permit(:status, :subscription_plan_id)
+      .merge({ tenant_id: current_user.profile.id })
   end
 
   def filter_by_tenant
