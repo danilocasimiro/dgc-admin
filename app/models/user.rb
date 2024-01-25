@@ -24,7 +24,8 @@ class User < ApplicationRecord
   end
 
   def password
-    @password ||= Password.new(password_digest)
+    @password = 
+      password_digest ? Password.new(password_digest) : nil
   end
 
   def password=(new_password)
