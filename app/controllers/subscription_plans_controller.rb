@@ -16,8 +16,4 @@ class SubscriptionPlansController < BaseController
   def permitted_params
     params.require(:subscription_plan).permit(:name, :description, :activation_months, :price)
   end
-
-  def set_resource
-    @model = model_class.find(params[:id])
-  end
 end

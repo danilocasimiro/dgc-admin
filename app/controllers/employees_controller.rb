@@ -3,9 +3,6 @@
 class EmployeesController < BaseController
   include UserContext
 
-  after_action :update_user, only: :update
-  after_action :create_user, only: :create
-
   before_action :set_resource, only: %i[show update destroy]
 
   def index
@@ -14,16 +11,26 @@ class EmployeesController < BaseController
     render json: @models.as_json(include: include_associations)
   end
 
-  private
+  def create
+    @model = model_class.create!(permitted_params)
+    create_user
 
-  def set_resource
-    @model = model_class.find(params[:id])
+    render json: @model
   end
+
+  def update
+    @model.update!(permitted_params)
+    update_user
+
+    render json: @model
+  end
+
+  private
 
   def permitted_params
     params.require(:employee)
-      .permit(:name)
-      .merge(employable_data)
+          .permit(:name)
+          .merge(employable_data)
   end
 
   def user_params

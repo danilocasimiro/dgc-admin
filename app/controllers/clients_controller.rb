@@ -3,14 +3,29 @@
 class ClientsController < BaseController
   include CompanyContext
 
-  after_action :create_user, :store_address, :associate_with_company, only: :create
-  after_action :update_user, :update_address, only: :update
   before_action :set_resource, only: %i[show update destroy]
 
   def index
     @models = model_class.with_company_id(current_company_id)
 
     render json: @models.as_json(include: include_associations)
+  end
+
+  def create
+    @model = model_class.create!(permitted_params)
+    create_user
+    store_address
+    associate_with_company
+
+    render json: @model
+  end
+
+  def update
+    @model.update!(permitted_params)
+    update_user
+    update_address
+
+    render json: @model
   end
 
   private

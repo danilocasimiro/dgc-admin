@@ -57,12 +57,8 @@ module JwtToken
   end
 
   def subscription_status(user)
-    if user.is_a?(Tenant)
-      user.allow_access? ? 'active' : nil
-    elsif user.is_a?(Employee)
-      user.tenant.allow_access? ? 'active' : nil
-    else
-      'active'
-    end
+    return 'active' if user.admin?
+
+    user.profile.allow_access? ? 'active' : nil
   end
 end

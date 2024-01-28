@@ -14,8 +14,8 @@ class SubscriptionsController < BaseController
 
   def permitted_params
     params.require(:subscription)
-      .permit(:status, :subscription_plan_id)
-      .merge({ tenant_id: current_user.profile.id })
+          .permit(:status, :subscription_plan_id)
+          .merge({ tenant_id: current_user.profile.id })
   end
 
   def filter_by_tenant

@@ -3,9 +3,6 @@
 class CompaniesController < BaseController
   include UserContext
 
-  after_action :store_address, only: :create
-  after_action :update_address, only: :update
-
   before_action :set_resource, only: %i[show destroy update]
 
   def index
@@ -14,10 +11,24 @@ class CompaniesController < BaseController
     render json: @models.as_json(include: include_associations)
   end
 
+  def create
+    @model = model_class.create!(permitted_params)
+    store_address
+
+    render json: @model
+  end
+
+  def update
+    @model.update!(permitted_params)
+    update_address
+
+    render json: @model
+  end
+
   private
 
   def set_resource
-    @model = Company.with_user_id(current_user.id).find(params[:id])
+    @model = model_class.with_user_id(current_user.id).find(params[:id])
   end
 
   def company_params
