@@ -24,7 +24,7 @@ class User < ApplicationRecord
   end
 
   def password
-    @password = 
+    @password =
       password_digest ? Password.new(password_digest) : nil
   end
 
@@ -51,12 +51,6 @@ class User < ApplicationRecord
 
   def employee?
     profile&.is_a?(Employee)
-  end
-
-  def allow_access?
-    return true unless tenant?
-
-    Date.today < profile.trial.end_at || profile&.current_subscription
   end
 
   def expiration_date

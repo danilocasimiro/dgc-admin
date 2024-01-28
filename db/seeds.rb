@@ -9,16 +9,16 @@ products = []
 
 
 puts 'Iniciado criação de User Admin'
-User.create(
+User.create!(
   email_address: 'admin@sistema.com',
   password: '123456'
 )
 puts 'Finalizado criação de User Admin'
 puts 'Iniciado criação do Tenant Teste'
-tenant = Tenant.create(
+tenant = Tenant.create!(
   name: Faker::Company.name.parameterize(separator: '_')
 )
-User.create(
+User.create!(
   profile_type: 'Tenant',
   profile_id: tenant.id,
   email_address: 'tenant@sistema.com',
@@ -26,11 +26,11 @@ User.create(
 )
 puts 'Finalizado criação do Tenant Teste'
 puts 'Iniciado criação da Empresa Teste'
-company = Company.create(
+company = Company.create!(
   name: Faker::Company.name,
   tenant:
 )
-Address.create(
+Address.create!(
   addressable_type: 'Company',
   addressable_id: company.id,
   street: Faker::Address.street_name,
@@ -42,23 +42,23 @@ Address.create(
 )
 puts 'Finalizado criação da Empresa Teste'
 puts 'Iniciado criação da Empregados Teste'
-  employee = Employee::create(
+  employee = Employee::create!(
     employable_type: 'Company',
     employable_id: company.id,
     name: Faker::Name.name
   )
-  User.create(
+  User.create!(
     profile_type: 'Employee',
     profile_id: employee.id,
     email_address: 'company_employee@sistema.com',
     password: '123456'
   )
-  employee = Employee::create(
+  employee = Employee::create!(
     employable_type: 'Tenant',
     employable_id: tenant.id,
     name: Faker::Name.name
   )
-  User.create(
+  User.create!(
     profile_type: 'Employee',
     profile_id: employee.id,
     email_address: 'tenant_employee@sistema.com',
@@ -66,25 +66,28 @@ puts 'Iniciado criação da Empregados Teste'
   )
 puts 'Finalizado criação da Empregados Teste'
 puts 'Iniciando criação dos Planos iniciais'
-SubscriptionPlan.create(
+SubscriptionPlan.create!(
   name: 'Plano Mensal',
   description: 'Ativação do sistema por 1 mês',
   activation_months: 1,
   price: 50.00
 )
-SubscriptionPlan.create(
+SubscriptionPlan.create!(
   name: 'Plano Semestral',
   description: 'Ativação do sistema por 6 meses',
   activation_months: 6,
   price: 85.00
 )
-SubscriptionPlan.create(
+SubscriptionPlan.create!(
   name: 'Plano Anual',
   description: 'Ativação do sistema por 1 ano',
   activation_months: 12,
   price: 100.00
 )
 puts 'Finalizado criação da Empregados Teste'
+puts 'Iniciado criação da Configuração inicial do sistema'
+  SystemConfiguration.create!
+puts 'Finalizado criação da Configuração inicial do sistema'
 # tenants << Tenant.create(
 #   user: User.create(
 #     email_address: 'admin@example.com',

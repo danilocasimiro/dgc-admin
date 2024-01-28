@@ -15,11 +15,18 @@ class Tenant < ApplicationRecord
   scope :with_user_id, ->(user_id) { where(user_id:) }
 
   def current_subscription
-    subscriptions.where(status: :active).where('end_at >= ?', Time.zone.today).first
+    config = SystemConfiguration.first
+    subscriptions.where(status: :active).where('end_at >= ?', Time.zone.today - config.grace_period_days).first
   end
 
   def last_subscription
     subscriptions.last
+  end
+
+  def allow_access?
+    config = SystemConfiguration.first
+
+    Date.today < (trial.end_at + config.grace_period_days) || current_subscription
   end
 
   private
