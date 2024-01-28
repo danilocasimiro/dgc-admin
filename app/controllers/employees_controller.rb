@@ -6,14 +6,20 @@ class EmployeesController < BaseController
   before_action :set_resource, only: %i[show update destroy]
 
   def index
-    @models = model_class.all
+    @models =
+      current_user.profile.is_a?(Tenant) ? current_user.profile.employees : current_user.profile.tenant.employees
 
-    render json: @models.as_json(include: include_associations)
+    if current_company_id
+      render json: @models.includes(:companies).where(companies: { id: current_company_id }).as_json(include: include_associations)
+    else
+      render json: @models.as_json(include: include_associations)
+    end
   end
 
   def create
-    @model = model_class.create!(permitted_params)
+    @model = model_class.create!(permitted_params.merge(tenant_id: current_user.profile.id))
     create_user
+    update_companies_employees
 
     render json: @model
   end
@@ -21,6 +27,7 @@ class EmployeesController < BaseController
   def update
     @model.update!(permitted_params)
     update_user
+    update_companies_employees
 
     render json: @model
   end
@@ -30,20 +37,23 @@ class EmployeesController < BaseController
   def permitted_params
     params.require(:employee)
           .permit(:name)
-          .merge(employable_data)
+  end
+
+  def companies_params
+    params.permit(companies: %i[id tenant_id])
   end
 
   def user_params
-    params.permit(:email_address, :password)
+    params.require(:user).permit(:email_address, :password)
   end
 
-  def employable_data
-    employable_id = params.dig(:employee, :employable_id)
+  def update_companies_employees
+    return nil unless companies_params[:companies]
 
-    if employable_id.present?
-      { employable_id:, employable_type: 'Company' }
-    else
-      { employable_id: current_user.profile.id, employable_type: 'Tenant' }
+    @model.companies_employees.destroy_all
+
+    companies_params[:companies].each do |company|
+      CompanyEmployee.create!(company_id: company[:id], employee_id: @model.id)
     end
   end
 end

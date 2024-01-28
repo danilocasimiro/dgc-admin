@@ -31,19 +31,19 @@ class BaseController < ApplicationController
   end
 
   def create_user
-    user = @model.build_user(user_params)
+    user = @model.build_user(user_params.reject { |_, value| value.blank? })
     user.save!
   end
 
   def update_user
-    @model.user.update!(user_params) if user_params
+    @model.user.update!(user_params.reject { |_, value| value.blank? }) if user_params
   end
 
   def store_address
     return unless addressable_params.present?
 
-    Address.create(
-      addressable_params[:address].merge({ addressable_id: @model.id, addressable_type: @model.class.capitalize })
+    Address.create!(
+      addressable_params[:address].merge({ addressable_id: @model.id, addressable_type: @model.class.name })
     )
   end
 
@@ -66,7 +66,7 @@ class BaseController < ApplicationController
   end
 
   def addressable_params
-    params.permit(:street, :number, :neighborhood, :city, :state, :zip_code)
+    params.permit(address: %i[street number neighborhood city state zip_code])
   end
 
   def include_associations

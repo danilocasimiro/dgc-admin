@@ -6,13 +6,13 @@ class CompaniesController < BaseController
   before_action :set_resource, only: %i[show destroy update]
 
   def index
-    @models = model_class.with_user_id(current_user.id)
+    @models = current_user.profile.companies
 
     render json: @models.as_json(include: include_associations)
   end
 
   def create
-    @model = model_class.create!(permitted_params)
+    @model = model_class.create!(permitted_params.merge(tenant_id: current_user.profile_id))
     store_address
 
     render json: @model
@@ -28,10 +28,10 @@ class CompaniesController < BaseController
   private
 
   def set_resource
-    @model = model_class.with_user_id(current_user.id).find(params[:id])
+    @model = current_user.profile.companies.find(params[:id])
   end
 
-  def company_params
-    params.require(:company).permit(:name).merge(tenant_id: current_user.profile_id)
+  def permitted_params
+    params.require(:company).permit(:name)
   end
 end
