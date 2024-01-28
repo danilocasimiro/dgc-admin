@@ -3,6 +3,10 @@
 class SystemConfigurationsController < BaseController
   before_action :set_resource, only: %i[update show]
 
+  def maintenance_mode
+    render json: SystemConfiguration.first.maintenance_mode
+  end
+
   private
 
   def permitted_params

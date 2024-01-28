@@ -6,7 +6,11 @@ Rails.application.routes.draw do
   resources :tenants, except: %i[new edit]
   resources :subscription_plans, except: %i[new edit]
   resources :users, only: %i[show update]
-  resources :system_configurations, only: %i[show update]
+  resources :system_configurations, only: %i[show update] do
+    collection do
+      get :maintenance_mode
+    end
+  end
   resources :subscriptions, only: %i[index create]
   resources :companies, except: %i[new edit]
   resources :clients, except: %i[new edit]

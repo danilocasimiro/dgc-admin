@@ -14,7 +14,7 @@ class UsersController < BaseController
   end
 
   def update
-    @model.update!(permitted_params)
+    @model.update!(permitted_params.reject { |_, value| value.blank? })
     @model.profile.update!(profile_params) if @model.profile && profile_params
 
     render json: @model
