@@ -43,8 +43,7 @@ Address.create!(
 puts 'Finalizado criação da Empresa Teste'
 puts 'Iniciado criação da Empregados Teste'
   employee = Employee::create!(
-    employable_type: 'Company',
-    employable_id: company.id,
+    tenant_id: tenant.id,
     name: Faker::Name.name
   )
   User.create!(
@@ -53,9 +52,12 @@ puts 'Iniciado criação da Empregados Teste'
     email_address: 'company_employee@sistema.com',
     password: '123456'
   )
+  CompanyEmployee.create!(
+    employee_id: employee.id,
+    company_id: company.id
+  )
   employee = Employee::create!(
-    employable_type: 'Tenant',
-    employable_id: tenant.id,
+    tenant_id: tenant.id,
     name: Faker::Name.name
   )
   User.create!(
@@ -63,6 +65,10 @@ puts 'Iniciado criação da Empregados Teste'
     profile_id: employee.id,
     email_address: 'tenant_employee@sistema.com',
     password: '123456'
+  )
+  CompanyEmployee.create!(
+    employee_id: employee.id,
+    company_id: company.id
   )
 puts 'Finalizado criação da Empregados Teste'
 puts 'Iniciando criação dos Planos iniciais'

@@ -19,4 +19,5 @@ Rails.application.routes.draw do
   resources :employees, except: %i[new edit]
   post '/authenticate', to: 'authentication#authenticate'
   post '/authenticate/company_auth/:company_id', to: 'authentication#company_auth'
+  post '/authenticate/logout_company_auth', to: 'authentication#logout_company_auth'
 end

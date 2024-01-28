@@ -19,6 +19,14 @@ class AuthenticationController < ApplicationController
     render json: generate_token(user, params[:company_id])
   end
 
+  def logout_company_auth
+    decoded_token = feth_decoded_jwt
+
+    user = User.find(decoded_token&.first&.dig('user', 'id'))
+
+    render json: generate_token(user)
+  end
+
   private
 
   def validate_company
