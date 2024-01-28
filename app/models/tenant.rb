@@ -2,9 +2,9 @@
 
 class Tenant < ApplicationRecord
   has_one :trial, inverse_of: :tenant, dependent: :destroy
-  has_one :employee, as: :employable, inverse_of: :tenant
   has_one :user, as: :profile, inverse_of: :profile, dependent: :destroy
 
+  has_many :employees, inverse_of: :tenant
   has_many :companies, inverse_of: :tenant
   has_many :subscriptions, inverse_of: :tenant
 

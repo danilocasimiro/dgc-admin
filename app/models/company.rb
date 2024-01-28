@@ -2,10 +2,11 @@
 
 class Company < ApplicationRecord
   has_one :address, as: :addressable, dependent: :destroy
-  has_one :employee, as: :employable, inverse_of: :company
 
   belongs_to :tenant, inverse_of: :companies
 
+  has_many :companies_employees, inverse_of: :company, class_name: 'CompanyEmployee'
+  has_many :employees, through: :companies_employees
   has_many :company_clients, inverse_of: :company
   has_many :clients, through: :company_clients
   has_many :product_types, inverse_of: :company
