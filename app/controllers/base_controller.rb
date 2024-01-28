@@ -47,10 +47,17 @@ class BaseController < ApplicationController
     )
   end
 
+  def set_resource
+    @model = model_class.find(params[:id])
+  end
+
   def update_address
-    if addressable_params
-      @model.address ? 
-        @model.address.update!(addressable_params[:address]) : store_address
+    return unless addressable_params
+
+    if @model.address
+      @model.address.update!(addressable_params[:address])
+    else
+      store_address
     end
   end
 
