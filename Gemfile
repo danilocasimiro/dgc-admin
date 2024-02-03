@@ -9,6 +9,8 @@ gem 'bcrypt'
 gem 'faker'
 gem 'figaro'
 gem 'jwt'
+gem 'mailgun-ruby', require: 'mailgun'
+
 gem 'rails', '~> 7.1.2'
 
 # Use mysql as the database for Active Record

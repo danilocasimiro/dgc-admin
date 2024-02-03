@@ -4,7 +4,7 @@ class TenantsController < BaseController
   include UserContext
 
   before_action :set_resource, only: %i[show update destroy]
-  before_action :user_authenticate?, except: %i[create]
+  before_action :user_authenticate?, :allow_access?, except: %i[create]
 
   def index
     @models =
@@ -16,7 +16,7 @@ class TenantsController < BaseController
   def create
     @model = model_class.create!(permitted_params)
     create_user
-
+    send_email
     render json: @model
   end
 
@@ -44,5 +44,13 @@ class TenantsController < BaseController
       else
         model_class.with_user_id(current_user.id).find(params[:id])
       end
+  end
+
+  def send_email
+    if @model.persisted?
+      origin = request.headers['Origin'] || request.headers['Referer']
+
+      UserRegistrationMailer.send_email(@model.user, origin).deliver_now
+    end
   end
 end

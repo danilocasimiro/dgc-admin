@@ -5,6 +5,10 @@ class AuthenticationController < ApplicationController
     user = User.authenticate(params[:email_address], params[:password])
     if !user
       render json: { error: 'Credenciais inválidas.' }, status: :unauthorized
+    elsif !user.active?
+      origin = request.headers['Origin'] || request.headers['Referer']
+      UserRegistrationMailer.send_email(user, origin).deliver_now
+      render json: { error: "Usuário inativo. Um novo email foi encaminhado para #{params[:email_address]} para realizar a ativação de sua conta." }, status: :unauthorized
     else
       render json: generate_token(user)
     end
