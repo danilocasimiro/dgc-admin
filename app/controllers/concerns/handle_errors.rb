@@ -8,6 +8,7 @@ module HandleErrors
     rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
     rescue_from ActiveRecord::RecordNotDestroyed, with: :handle_record_not_destroyed
     rescue_from ActiveRecord::RecordNotSaved, with: :handle_record_not_saved
+    rescue_from ForbiddenError, with: :handle_forbidden_error 
   end
 
   private
@@ -34,5 +35,11 @@ module HandleErrors
     error_message = exception.message
     response.headers['X-Error-Message'] = error_message
     render json: { error: error_message }, status: :unprocessable_entity
+  end
+
+  def handle_forbidden_error(exception)
+    error_message = exception.message
+    response.headers['X-Error-Message'] = error_message
+    render json: { error: error_message }, status: :forbidden
   end
 end
