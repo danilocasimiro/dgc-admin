@@ -10,6 +10,7 @@ products = []
 
 puts 'Iniciado criação de User Admin'
 User.create!(
+  status: 0,
   email_address: 'admin@sistema.com',
   password: '123456'
 )
@@ -21,6 +22,7 @@ tenant = Tenant.create!(
 User.create!(
   profile_type: 'Tenant',
   profile_id: tenant.id,
+  status: 0,
   email_address: 'tenant@sistema.com',
   password: '123456'
 )
@@ -49,6 +51,7 @@ puts 'Iniciado criação da Empregados Teste'
   User.create!(
     profile_type: 'Employee',
     profile_id: employee.id,
+    status: 0,
     email_address: 'company_employee@sistema.com',
     password: '123456'
   )
@@ -63,6 +66,7 @@ puts 'Iniciado criação da Empregados Teste'
   User.create!(
     profile_type: 'Employee',
     profile_id: employee.id,
+    status: 0,
     email_address: 'tenant_employee@sistema.com',
     password: '123456'
   )
@@ -91,9 +95,51 @@ SubscriptionPlan.create!(
   price: 100.00
 )
 puts 'Finalizado criação da Empregados Teste'
+puts 'Iniciado criação da Configuração do serviço de email do sistema'
+  smtp_email_config = SmtpEmailConfiguration.create!(
+    active:               true,
+    name:                 Figaro.env.service_email_name,
+    address:              Figaro.env.service_email_domain,
+    port:                 587,
+    domain:               Figaro.env.service_email_domain,
+    user_name:            Figaro.env.service_email_user_name,
+    password:             Figaro.env.service_email_password,
+    authentication:       'plain',
+  )
+puts 'Finalizado criação da Configuração do serviço de email do sistema'
 puts 'Iniciado criação da Configuração inicial do sistema'
-  SystemConfiguration.create!
+  SystemConfiguration.create!(
+    smtp_email_configuration_id: smtp_email_config.id
+  )
 puts 'Finalizado criação da Configuração inicial do sistema'
+puts 'Iniciado criação de templates de email do sistema'
+  user_email_template = EmailTemplate.create!(
+    action: 'user_register',
+    subject: 'Confirmação de registro no sistema Ecommerce.',
+    body: '<p>Olá {{nome_do_usuario}}!!!</p><p>Clique no link abaixo para confirmar seu cadastro no sistema Ecommerce</p><p>{{link_para_ativacao_registro}}</p>',
+    allow_variables: 'nome_do_usuario | link_para_ativacao_registro'
+  )
+  employee_email_template = EmailTemplate.create!(
+    action: 'employee_register',
+    subject: 'Registro de colaborador no sistema Ecommerce.',
+    body: '<p>Olá {{nome_do_usuario}}!!!</p><p>Você foi registrado por {{tenant_email_address}} no sistema Ecommerce<p>Clique no link abaixo para confirmar seu cadastro</p><p>{{link_para_ativacao_registro}}</p>',
+    allow_variables: 'nome_do_usuario | link_para_ativacao_registro | tenant_email_address'
+  )
+puts 'Finalizado criação de templates de email do sistema'
+puts 'Iniciado criação de templates de email da empresa'
+  CompanyEmailTemplate.create!(
+    company_id: company.id,
+    email_template_id: user_email_template.id,
+    subject: user_email_template.subject,
+    body: user_email_template.body
+  )
+  CompanyEmailTemplate.create!(
+    company_id: company.id,
+    email_template_id: employee_email_template.id,
+    subject: employee_email_template.subject,
+    body: employee_email_template.body
+  )
+puts 'Finalizado criação de templates de email da empresa'
 # tenants << Tenant.create(
 #   user: User.create(
 #     email_address: 'admin@example.com',

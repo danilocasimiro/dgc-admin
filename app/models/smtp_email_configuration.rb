@@ -1,0 +1,2 @@
+class SmtpEmailConfiguration < ApplicationRecord
+end
