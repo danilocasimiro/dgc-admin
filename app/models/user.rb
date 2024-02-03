@@ -13,9 +13,13 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true, uniqueness: true
 
+  has_many :validations, inverse_of: :user
+
   delegate :status, to: :last_subscription, prefix: true, allow_nil: true
   delegate :last_subscription, to: :profile, allow_nil: true
   delegate :name, to: :profile, prefix: false, allow_nil: true
+
+  enum status: { active: 0, inactive: 1 }
 
   before_create :set_friendly_id
 

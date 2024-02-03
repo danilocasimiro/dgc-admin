@@ -5,6 +5,7 @@ class CreateUsers < ActiveRecord::Migration[7.1]
       t.bigint :friendly_id
       t.string :email_address
       t.string :password_digest
+      t.integer :status, default: 1
 
 
       t.timestamps
