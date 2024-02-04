@@ -119,6 +119,12 @@ puts 'Iniciado criação de templates de email do sistema'
     body: '<p>Olá {{nome_do_usuario}}!!!</p><p>Clique no link abaixo para confirmar seu cadastro no sistema Ecommerce</p><p>{{link_para_ativacao_registro}}</p>',
     allow_variables: 'nome_do_usuario | link_para_ativacao_registro'
   )
+  user_password_recovery_template = EmailTemplate.create!(
+    action: 'password_recovery',
+    subject: 'Recuperação de senha no sistema Ecommerce.',
+    body: '<p>Olá {{nome_do_usuario}}!!!</p><p>Clique no link abaixo para cadastrar uma nova senha para sua conta no sistema Ecommerce</p><p>{{link_para_atualizar_senha}}</p>',
+    allow_variables: 'nome_do_usuario | link_para_atualizar_senha'
+  )
   employee_email_template = EmailTemplate.create!(
     action: 'employee_register',
     subject: 'Registro de colaborador no sistema Ecommerce.',
@@ -138,6 +144,12 @@ puts 'Iniciado criação de templates de email da empresa'
     email_template_id: employee_email_template.id,
     subject: employee_email_template.subject,
     body: employee_email_template.body
+  )
+  CompanyEmailTemplate.create!(
+    company_id: company.id,
+    email_template_id: user_password_recovery_template.id,
+    subject: user_password_recovery_template.subject,
+    body: user_password_recovery_template.body
   )
 puts 'Finalizado criação de templates de email da empresa'
 # tenants << Tenant.create(

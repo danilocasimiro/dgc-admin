@@ -16,7 +16,7 @@ class UserRegistrationMailer < ApplicationMailer
     @template.body.gsub('{{nome_do_usuario}}', @user.name)
       .gsub(
         '{{link_para_ativacao_registro}}',
-        "<a href='#{origin}/user_activation/#{@user.id}?token=#{create_token}&validation_type=registration'>Clique aqui para confirmar seu cadastro</a>"
+        "<a href='#{origin}/user-activation/#{@user.id}?token=#{create_token}&validation_type=registration'>Clique aqui para confirmar seu cadastro</a>"
       ).html_safe
   end
 

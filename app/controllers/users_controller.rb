@@ -5,7 +5,7 @@ class UsersController < BaseController
 
   before_action :set_resource, only: %i[show update]
 
-  before_action :user_authenticate?, :allow_access?, except: %i[activate]
+  before_action :user_authenticate?, :allow_access?, except: %i[activate password_recovery update_password]
 
   def show
     if @model.admin?
@@ -34,6 +34,31 @@ class UsersController < BaseController
     validator.user.update!(status: 0)
   end
 
+  def password_recovery
+    @model = User.find_by!(email_address: password_recovery_params[:email_address])
+    @model.validations.where(validation_type: 1).tap do |validation|
+      validation.update!(status: 1)
+    end
+
+    validator = Validation.create!(
+      user_id: @model.id,
+      token: SecureRandom.hex(20),
+      validation_type: 1,
+      status: 0
+    )
+    send_email(validator.token)
+  end
+
+  def update_password
+    validator = Validation.find_by!(
+      user_id: update_password_params[:user_id],
+      validation_type: 1,
+      status: 0
+    )
+    validator.user.update!(password: update_password_params[:password])
+    validator.update!(status: 2)
+  end
+
   private
 
   def permitted_params
@@ -44,7 +69,21 @@ class UsersController < BaseController
     params.permit(:token, :user_id, :validation_type)
   end
 
+  def password_recovery_params
+    params.permit(:email_address)
+  end
+
+  def update_password_params
+    params.permit(:user_id, :password, :token)
+  end
+
   def profile_params
     params.permit(:name)
+  end
+
+  def send_email(token)
+    origin = request.headers['Origin'] || request.headers['Referer']
+
+    UserPasswordRecoveryMailer.send_email(@model, origin, token).deliver_now
   end
 end

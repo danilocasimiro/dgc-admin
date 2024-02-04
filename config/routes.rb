@@ -7,6 +7,10 @@ Rails.application.routes.draw do
   resources :subscription_plans, except: %i[new edit]
   resources :users, only: %i[show update] do
     put :activate
+    put :update_password
+    collection do
+      post :password_recovery
+    end
   end
   resources :system_configurations, only: %i[show update] do
     collection do
