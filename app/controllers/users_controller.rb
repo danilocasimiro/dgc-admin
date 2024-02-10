@@ -16,6 +16,8 @@ class UsersController < BaseController
   end
 
   def update
+    return raise ForbiddenError if !current_user.admin? && current_user.id != params[:id].to_i
+
     @model.update!(permitted_params.reject { |_, value| value.blank? })
     @model.profile.update!(profile_params) if @model.profile && profile_params
 

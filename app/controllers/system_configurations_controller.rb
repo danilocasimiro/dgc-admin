@@ -12,4 +12,10 @@ class SystemConfigurationsController < BaseController
   def permitted_params
     params.require(:system_configuration).permit(%i[maintenance_mode grace_period_days])
   end
+  
+  def set_resource
+    raise ForbiddenError if current_user.admin?
+
+    @model = model_class.find(params[:id])
+  end
 end
