@@ -7,7 +7,7 @@ class SubscriptionsController < BaseController
     @models =
       current_user.admin? ? model_class.all : filter_by_tenant
 
-    render json: @models.as_json(include: include_associations)
+    render json: paginate(@models)
   end
 
   private

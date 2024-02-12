@@ -10,7 +10,7 @@ class TenantsController < BaseController
     @models =
       current_user.admin? ? model_class.all : model_class.with_user_id(current_user.id)
 
-    render json: @models.as_json(include: include_associations)
+    render json: paginate(@models)
   end
 
   def create

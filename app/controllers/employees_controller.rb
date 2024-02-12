@@ -10,9 +10,9 @@ class EmployeesController < BaseController
       current_user.profile.is_a?(Tenant) ? current_user.profile.employees : current_user.profile.tenant.employees
 
     if current_company_id
-      render json: @models.includes(:companies).where(companies: { id: current_company_id }).as_json(include: include_associations)
+      render json: paginate(@models.includes(:companies).where(companies: { id: current_company_id }))
     else
-      render json: @models.as_json(include: include_associations)
+      render json: paginate(@models)
     end
   end
 

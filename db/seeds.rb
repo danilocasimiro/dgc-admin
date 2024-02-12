@@ -74,6 +74,24 @@ puts 'Iniciado criação da Empregados Teste'
     employee_id: employee.id,
     company_id: company.id
   )
+
+35.times do
+  employee = Employee::create!(
+    tenant_id: tenant.id,
+    name: Faker::Name.name
+  )
+  User.create!(
+    profile_type: 'Employee',
+    profile_id: employee.id,
+    status: 0,
+    email_address: Faker::Internet.email,
+    password: '123456'
+  )
+  CompanyEmployee.create!(
+    employee_id: employee.id,
+    company_id: company.id
+  )
+end
 puts 'Finalizado criação da Empregados Teste'
 puts 'Iniciando criação dos Planos iniciais'
 SubscriptionPlan.create!(
@@ -152,6 +170,7 @@ puts 'Iniciado criação de templates de email da empresa'
     body: user_password_recovery_template.body
   )
 puts 'Finalizado criação de templates de email da empresa'
+
 # tenants << Tenant.create(
 #   user: User.create(
 #     email_address: 'admin@example.com',
@@ -215,24 +234,24 @@ puts 'Finalizado criação de templates de email da empresa'
 # end
 # puts 'Finalizado a criação de Products'
 # puts 'Iniciado a criação de Clients'
-# 15.times do
-#   client = Client.create(
-#     user: User.create(
-#       email_address: Faker::Internet.email,
-#       password: '123456'
-#     ),
-#     name: Faker::Name.name
-#   )
-#   Address.create(
-#     addressable_type: 'Client',
-#     addressable_id: client.id,
-#     street: Faker::Address.street_name,
-#     number: Faker::Address.building_number,
-#     neighborhood: "#{Faker::Address.city_prefix} #{Faker::Address.city_suffix}",
-#     city: Faker::Address.city,
-#     state: Faker::Address.state_abbr,
-#     zip_code: Faker::Address.zip_code
-#   )
-#   CompanyClient.create(client:, company: companies.first)
-# end
-# puts 'Finalizado a criação de Clients'
+35.times do
+  client = Client.create(
+    user: User.create(
+      email_address: Faker::Internet.email,
+      password: '123456'
+    ),
+    name: Faker::Name.name
+  )
+  # Address.create(
+  #   addressable_type: 'Client',
+  #   addressable_id: client.id,
+  #   street: Faker::Address.street_name,
+  #   number: Faker::Address.building_number,
+  #   neighborhood: "#{Faker::Address.city_prefix} #{Faker::Address.city_suffix}",
+  #   city: Faker::Address.city,
+  #   state: Faker::Address.state_abbr,
+  #   zip_code: Faker::Address.zip_code
+  # )
+  CompanyClient.create(client:, company:)
+end
+puts 'Finalizado a criação de Clients'

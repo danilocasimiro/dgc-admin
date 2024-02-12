@@ -2,6 +2,7 @@
 
 class BaseController < ApplicationController
   include HandleErrors
+  include PaginationSerializer
 
   def show
     render json: @model.as_json(include: include_associations)

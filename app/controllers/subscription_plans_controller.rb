@@ -8,7 +8,7 @@ class SubscriptionPlansController < BaseController
   def index
     @models = model_class.all
 
-    render json: @models.as_json(include: include_associations)
+    render json: paginate(@models)
   end
 
   private
