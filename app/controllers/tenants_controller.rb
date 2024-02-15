@@ -21,6 +21,8 @@ class TenantsController < BaseController
   end
 
   def update
+    return raise ForbiddenError unless user_has_permission?
+
     @model.update!(permitted_params)
     update_user
 
@@ -47,10 +49,10 @@ class TenantsController < BaseController
   end
 
   def send_email
-    if @model.persisted?
-      origin = request.headers['Origin'] || request.headers['Referer']
+    return unless @model.persisted?
 
-      UserRegistrationMailer.send_email(@model.user, origin).deliver_now
-    end
+    origin = request.headers['Origin'] || request.headers['Referer']
+
+    UserRegistrationMailer.send_email(@model.user, origin).deliver_now
   end
 end
