@@ -7,6 +7,8 @@ class Client < ApplicationRecord
   has_many :company_clients, inverse_of: :client, dependent: :destroy
   has_many :companies, through: :company_clients
 
+  validates_presence_of :name
+
   scope :with_company_id, ->(company_id) { joins(:company_clients).where(company_clients: { company_id: }) }
 
   def associate_with_company(company_id)

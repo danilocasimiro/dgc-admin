@@ -12,6 +12,8 @@ class Tenant < ApplicationRecord
 
   after_create :create_trial
 
+  validates_presence_of :name
+
   scope :with_user_id, ->(user_id) { where(user_id:) }
 
   def current_subscription

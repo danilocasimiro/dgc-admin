@@ -12,6 +12,9 @@ class Subscription < ApplicationRecord
 
   validates :status, inclusion: { in: Subscription.statuses.keys }
 
+  validates_presence_of :status, :start_at
+  validates_timeliness :start_at, :end_at, type: :date, format: "%Y-%m-%d"
+
   private
 
   def add_start_at

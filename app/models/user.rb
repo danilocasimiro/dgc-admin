@@ -21,6 +21,9 @@ class User < ApplicationRecord
 
   enum status: { active: 0, inactive: 1 }
 
+  validates_presence_of :friendly_id, :email_address, :password_digest, :status
+  validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }
+
   before_create :set_friendly_id
 
   def admin?

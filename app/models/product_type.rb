@@ -7,6 +7,11 @@ class ProductType < ApplicationRecord
 
   before_destroy :validate_before_destroy
 
+  validates_presence_of :name
+  validates_uniqueness_of :name, scope: :company_id
+
+  validates :price, numericality: { greater_than_or_equal_to: 0 }
+
   scope :with_company_id, ->(company_id) { where(company_id:) }
 
   def validate_before_destroy

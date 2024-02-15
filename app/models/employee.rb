@@ -8,6 +8,9 @@ class Employee < ApplicationRecord
 
   has_one :user, as: :profile, inverse_of: :profile, dependent: :destroy
 
+  validates_presence_of :name
+  validates_uniqueness_of :name, scope: :tenant_id
+
   delegate :trial, :current_subscription, to: :tenant
 
   def allow_access?
