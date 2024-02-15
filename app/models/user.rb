@@ -13,7 +13,7 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true, uniqueness: true
 
-  has_many :validations, inverse_of: :user
+  has_many :validations, inverse_of: :user, dependent: :destroy
 
   delegate :status, to: :last_subscription, prefix: true, allow_nil: true
   delegate :last_subscription, to: :profile, allow_nil: true
