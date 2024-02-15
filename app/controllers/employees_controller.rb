@@ -8,7 +8,6 @@ class EmployeesController < BaseController
   def index
     @models =
       current_user.profile.is_a?(Tenant) ? current_user.profile.employees : current_user.profile.tenant.employees
-
     if current_company_id
       render json: paginate(@models.includes(:companies).where(companies: { id: current_company_id }))
     else
@@ -20,6 +19,7 @@ class EmployeesController < BaseController
     @model = model_class.create!(permitted_params.merge(tenant_id: current_user.profile.id))
     create_user
     update_companies_employees
+    send_email
 
     render json: @model
   end
@@ -55,5 +55,13 @@ class EmployeesController < BaseController
     companies_params[:companies].each do |company|
       CompanyEmployee.create!(company_id: company[:id], employee_id: @model.id)
     end
+  end
+
+  def send_email
+    return unless @model.persisted?
+
+    origin = request.headers['Origin'] || request.headers['Referer']
+
+    UserRegistrationMailer.send_email(@model.user, origin).deliver_now
   end
 end
