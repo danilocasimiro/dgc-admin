@@ -24,8 +24,9 @@ module Ecommece
     #
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'localhost:3000' # ou especifique seus domínios permitidos
-        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options]
+        origins 'localhost:3000'
+        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options],
+                     expose: ['Total-Pages']
       end
     end
     # config.time_zone = "Central Time (US & Canada)"
