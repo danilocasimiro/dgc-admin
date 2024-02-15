@@ -76,4 +76,8 @@ class BaseController < ApplicationController
     expand_params = params[:expand].split(',').map(&:to_sym)
     model_class.relation_map.select { |item| expand_params.include?(item) }
   end
+
+  def user_has_permission?
+    current_user.admin? || current_user.id == params[:id].to_i
+  end
 end

@@ -8,6 +8,8 @@ class UsersController < BaseController
   before_action :user_authenticate?, :allow_access?, except: %i[activate password_recovery update_password]
 
   def show
+    return raise ForbiddenError unless user_has_permission?
+
     if @model.admin?
       render json: { user: @model.as_json }
     else
@@ -16,7 +18,7 @@ class UsersController < BaseController
   end
 
   def update
-    return raise ForbiddenError if !current_user.admin? && current_user.id != params[:id].to_i
+    return raise ForbiddenError unless user_has_permission?
 
     @model.update!(permitted_params.reject { |_, value| value.blank? })
     @model.profile.update!(profile_params) if @model.profile && profile_params
@@ -42,12 +44,7 @@ class UsersController < BaseController
       validation.update!(status: 1)
     end
 
-    validator = Validation.create!(
-      user_id: @model.id,
-      token: SecureRandom.hex(20),
-      validation_type: 1,
-      status: 0
-    )
+    validator = create_validator
     send_email(validator.token)
   end
 
@@ -87,5 +84,14 @@ class UsersController < BaseController
     origin = request.headers['Origin'] || request.headers['Referer']
 
     UserPasswordRecoveryMailer.send_email(@model, origin, token).deliver_now
+  end
+
+  def create_validator
+    Validation.create!(
+      user_id: @model.id,
+      token: SecureRandom.hex(20),
+      validation_type: 1,
+      status: 0
+    )
   end
 end
