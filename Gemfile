@@ -51,6 +51,11 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'rspec-rails', '~> 5.0'
   gem 'rubocop', require: false
+  gem 'shoulda-matchers', '~> 5.0'
+end
+
+group :test do
+  gem 'simplecov', require: false
 end
 
 group :development do
