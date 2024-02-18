@@ -13,9 +13,15 @@ class Subscription < ApplicationRecord
   validates :status, inclusion: { in: Subscription.statuses.keys }
 
   validates_presence_of :status, :start_at
-  validates_timeliness :start_at, :end_at, type: :date, format: "%Y-%m-%d"
+  validate :start_at_cannot_be_greater_than_end_date
 
   private
+
+  def start_at_cannot_be_greater_than_end_date
+    if end_at && start_at && end_at < start_at
+      errors.add(:end_at, "não pode ser maior que a data de início")
+    end
+  end
 
   def add_start_at
     self.start_at = Date.today

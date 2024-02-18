@@ -9,7 +9,7 @@ class CompanyClient < ApplicationRecord
   private
 
   def unique_client_company_combination
-    if self.where(client_id:, company_id:).exists?
+    if CompanyClient.where(client_id: client_id, company_id: company_id).exists?
       errors.add(:base, "Este cliente já está associado a esta empresa")
     end
   end

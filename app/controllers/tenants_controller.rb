@@ -8,7 +8,7 @@ class TenantsController < BaseController
 
   def index
     @models =
-      current_user.admin? ? model_class.all : model_class.with_user_id(current_user.id)
+      current_user.admin? ? model_class.all : model_class.find(current_user.profile.id)
 
     render json: paginate(@models)
   end

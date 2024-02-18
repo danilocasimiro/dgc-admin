@@ -9,7 +9,7 @@ class CompanyEmailTemplate < ApplicationRecord
   private
 
   def unique_email_template_company_combination
-    if self.where(email_template_id:, company_id:).exists?
+    if CompanyEmailTemplate.where(email_template_id:, company_id:).exists?
       errors.add(:base, "Este template de email já está associado a esta empresa")
     end
   end

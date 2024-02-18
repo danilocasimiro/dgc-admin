@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Tenant < ApplicationRecord
+  belongs_to :affiliate, optional: true
+
   has_one :trial, inverse_of: :tenant, dependent: :destroy
   has_one :user, as: :profile, inverse_of: :profile, dependent: :destroy
 
@@ -8,13 +10,9 @@ class Tenant < ApplicationRecord
   has_many :companies, inverse_of: :tenant
   has_many :subscriptions, inverse_of: :tenant
 
-  before_destroy :validate_before_destroy
-
   after_create :create_trial
 
   validates_presence_of :name
-
-  scope :with_user_id, ->(user_id) { where(user_id:) }
 
   def current_subscription
     config = SystemConfiguration.first
@@ -41,13 +39,6 @@ class Tenant < ApplicationRecord
       errors.add(:base, "Erro ao criar dado na outra tabela: #{e.message}")
       raise ActiveRecord::Rollback
     end
-  end
-
-  def validate_before_destroy
-    return if companies.empty?
-
-    errors.add(:base, 'Não é possível excluir este inquilino por conta que ele possui empresas associadas.')
-    throw(:abort)
   end
 
   class << self

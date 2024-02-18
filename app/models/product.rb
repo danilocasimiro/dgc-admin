@@ -4,6 +4,7 @@ class Product < ApplicationRecord
   belongs_to :product_type, inverse_of: :products
 
   validates_presence_of :name, :price
+  validates :price, numericality: { greater_than_or_equal_to: 0 }
 
   scope :with_company_id, ->(company_id) { joins(:product_type).where(product_type: { company_id: }) }
 
