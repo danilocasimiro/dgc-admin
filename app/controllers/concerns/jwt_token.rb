@@ -29,7 +29,8 @@ module JwtToken
                    expiration_date: user.expiration_date,
                    subscription_status: subscription_status(user),
                    company_name: company&.name,
-                   company_id:
+                   company_id:,
+                   menu: user.menu(company).as_json
                  }
                }, Figaro.env.jwt_secret, 'HS256')
   end

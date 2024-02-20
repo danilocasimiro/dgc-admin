@@ -12,7 +12,8 @@ puts 'Iniciado criação de User Admin'
 User.create!(
   status: 0,
   email_address: 'admin@sistema.com',
-  password: '123456'
+  password: '123456',
+  friendly_id: 1
 )
 puts 'Finalizado criação de User Admin'
 puts 'Iniciado criação do Tenant Teste'
@@ -24,7 +25,8 @@ User.create!(
   profile_id: tenant.id,
   status: 0,
   email_address: 'tenant@sistema.com',
-  password: '123456'
+  password: '123456',
+  friendly_id: 2
 )
 puts 'Finalizado criação do Tenant Teste'
 puts 'Iniciado criação da Empresa Teste'
@@ -53,7 +55,8 @@ puts 'Iniciado criação da Empregados Teste'
     profile_id: employee.id,
     status: 0,
     email_address: 'company_employee@sistema.com',
-    password: '123456'
+    password: '123456',
+    friendly_id: 3
   )
   CompanyEmployee.create!(
     employee_id: employee.id,
@@ -68,7 +71,8 @@ puts 'Iniciado criação da Empregados Teste'
     profile_id: employee.id,
     status: 0,
     email_address: 'tenant_employee@sistema.com',
-    password: '123456'
+    password: '123456',
+    friendly_id: 4
   )
   CompanyEmployee.create!(
     employee_id: employee.id,
@@ -85,7 +89,8 @@ puts 'Iniciado criação da Empregados Teste'
     profile_id: employee.id,
     status: 0,
     email_address: Faker::Internet.email,
-    password: '123456'
+    password: '123456',
+    friendly_id: 5
   )
   CompanyEmployee.create!(
     employee_id: employee.id,
@@ -170,6 +175,181 @@ puts 'Iniciado criação de templates de email da empresa'
     body: user_password_recovery_template.body
   )
 puts 'Finalizado criação de templates de email da empresa'
+puts 'Iniciado criação do menu'
+  # Abertura admin menu
+  menu_tenant = Menu.create!(
+    parent_id: nil,
+    label: 'Clientes',
+    link: '#',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_tenant.id,
+    label: 'Criar',
+    link: '/tenants/new',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_tenant.id,
+    label: 'Listar',
+    link: '/tenants/list',
+    icon: nil,
+    users_allowed: :admin
+  )
+  menu_subscription_plan = Menu.create!(
+    parent_id: nil,
+    label: 'Planos',
+    link: '#',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_subscription_plan.id,
+    label: 'Criar',
+    link: '/subscription-plans/new',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_subscription_plan.id,
+    label: 'Listar',
+    link: '/subscription-plans/list',
+    icon: nil,
+    users_allowed: :admin
+  )
+  menu_subscription = Menu.create!(
+    parent_id: nil,
+    label: 'Assinaturas',
+    link: '#',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_subscription.id,
+    label: 'Listar',
+    link: '/subscriptions/list',
+    icon: nil,
+    users_allowed: :admin
+  )
+  menu_template = Menu.create!(
+    parent_id: nil,
+    label: 'Template',
+    link: '#',
+    icon: nil,
+    users_allowed: :admin
+  )
+  sub_menu_email= Menu.create!(
+    parent_id: menu_template.id,
+    label: 'Emails',
+    link: '#',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: sub_menu_email.id,
+    label: 'Listar',
+    link: '/templates/emails/list',
+    icon: nil,
+    users_allowed: :admin
+  )
+  # Fechamendo Admin menu
+  # Abertura Tenant menu
+  menu_company = Menu.create!(
+    parent_id: nil,
+    label: 'Empresas',
+    link: '#',
+    icon: nil,
+    users_allowed: 'tenant | employee'
+  )
+  Menu.create!(
+    parent_id: menu_company.id,
+    label: 'Criar',
+    link: '/companies/new',
+    icon: nil,
+    users_allowed: :tenant
+  )
+  Menu.create!(
+    parent_id: menu_company.id,
+    label: 'Listar',
+    link: '/companies/list',
+    icon: nil,
+    users_allowed: 'tenant | employee'
+  )
+  menu_employee = Menu.create!(
+    parent_id: nil,
+    label: 'Colaboradores',
+    link: '#',
+    icon: nil,
+    users_allowed: :tenant
+  )
+  Menu.create!(
+    parent_id: menu_employee.id,
+    label: 'Criar',
+    link: '/employees/new',
+    icon: nil,
+    users_allowed: :tenant
+  )
+  Menu.create!(
+    parent_id: menu_employee.id,
+    label: 'Listar',
+    link: '/employees/list',
+    icon: nil,
+    users_allowed: :tenant
+  )
+  # Fechamendo Tenant menu
+  # Abertura Company menu
+  menu_product_type = Menu.create!(
+    parent_id: nil,
+    label: 'Tipos de Produto',
+    link: '#',
+    icon: nil,
+    company: true,
+    users_allowed: 'tenant | employee'
+  )
+  Menu.create!(
+    parent_id: menu_product_type.id,
+    label: 'Criar',
+    link: '/product-types/new',
+    icon: nil,
+    company: true,
+    users_allowed: 'tenant | employee'
+  )
+  Menu.create!(
+    parent_id: menu_product_type.id,
+    label: 'Listar',
+    link: '/product-types/list',
+    icon: nil,
+    company: true,
+    users_allowed: 'tenant | employee'
+  )
+  menu_product = Menu.create!(
+    parent_id: nil,
+    label: 'Produtos',
+    link: '#',
+    icon: nil,
+    company: true,
+    users_allowed: 'tenant | employee'
+  )
+  Menu.create!(
+    parent_id: menu_product.id,
+    label: 'Criar',
+    link: '/products/new',
+    icon: nil,
+    company: true,
+    users_allowed: 'tenant | employee'
+  )
+  Menu.create!(
+    parent_id: menu_product.id,
+    label: 'Listar',
+    link: '/products/list',
+    icon: nil,
+    company: true,
+    users_allowed: 'tenant | employee'
+  )
+  # Fechamendo Company menu
+puts 'Finalizado criação do menu'
 
 # tenants << Tenant.create(
 #   user: User.create(
@@ -233,12 +413,14 @@ puts 'Finalizado criação de templates de email da empresa'
 #   end
 # end
 # puts 'Finalizado a criação de Products'
-# puts 'Iniciado a criação de Clients'
+puts 'Iniciado a criação de Clients'
 35.times do
+  friendly_id = Faker::Number.unique.number(digits: 6)
   client = Client.create(
     user: User.create(
       email_address: Faker::Internet.email,
-      password: '123456'
+      password: '123456',
+      friendly_id: friendly_id
     ),
     name: Faker::Name.name
   )

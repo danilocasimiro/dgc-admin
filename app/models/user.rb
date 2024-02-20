@@ -60,6 +60,12 @@ class User < ApplicationRecord
     profile&.is_a?(Employee)
   end
 
+  def menu(company = false)
+    menu_type = profile_type.nil? ? 'admin' : profile_type.downcase
+
+    Menu.where("users_allowed LIKE ? and company  = ?", "%#{menu_type}%", !!company)
+  end
+
   def expiration_date
     return nil unless tenant?
 
