@@ -21,7 +21,7 @@ class User < ApplicationRecord
 
   enum status: { active: 0, inactive: 1 }
 
-  validates_presence_of :friendly_id, :email_address, :password_digest, :status
+  validates_presence_of :email_address, :password_digest, :status
   validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   before_create :set_friendly_id
@@ -60,10 +60,14 @@ class User < ApplicationRecord
     profile&.is_a?(Employee)
   end
 
+  def affiliate?
+    profile&.is_a?(Affiliate)
+  end
+
   def menu(company = false)
     menu_type = profile_type.nil? ? 'admin' : profile_type.downcase
 
-    Menu.where("users_allowed LIKE ? and company  = ?", "%#{menu_type}%", !!company)
+    Menu.where('users_allowed LIKE ? and company  = ?', "%#{menu_type}%", !!company)
   end
 
   def expiration_date

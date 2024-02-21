@@ -181,28 +181,28 @@ puts 'Iniciado criação do menu'
     parent_id: nil,
     label: 'Clientes',
     link: '#',
-    icon: nil,
-    users_allowed: :admin
+    icon: 'bx bx-group',
+    users_allowed: 'admin | affiliate'
   )
   Menu.create!(
     parent_id: menu_tenant.id,
     label: 'Criar',
     link: '/tenants/new',
     icon: nil,
-    users_allowed: :admin
+    users_allowed: 'admin | affiliate'
   )
   Menu.create!(
     parent_id: menu_tenant.id,
     label: 'Listar',
     link: '/tenants/list',
     icon: nil,
-    users_allowed: :admin
+    users_allowed: 'admin | affiliate'
   )
   menu_subscription_plan = Menu.create!(
     parent_id: nil,
     label: 'Planos',
     link: '#',
-    icon: nil,
+    icon: 'bx bxs-spreadsheet',
     users_allowed: :admin
   )
   Menu.create!(
@@ -223,7 +223,7 @@ puts 'Iniciado criação do menu'
     parent_id: nil,
     label: 'Assinaturas',
     link: '#',
-    icon: nil,
+    icon: 'bx bx-pencil',
     users_allowed: :admin
   )
   Menu.create!(
@@ -237,7 +237,7 @@ puts 'Iniciado criação do menu'
     parent_id: nil,
     label: 'Template',
     link: '#',
-    icon: nil,
+    icon: 'bx bxs-book-bookmark',
     users_allowed: :admin
   )
   sub_menu_email= Menu.create!(
@@ -254,13 +254,34 @@ puts 'Iniciado criação do menu'
     icon: nil,
     users_allowed: :admin
   )
+  menu_affiliate = Menu.create!(
+    parent_id: nil,
+    label: 'Afiliados',
+    link: '#',
+    icon: 'bx bx-user-circle',
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_affiliate.id,
+    label: 'Criar',
+    link: '/affiliates/new',
+    icon: nil,
+    users_allowed: :admin
+  )
+  Menu.create!(
+    parent_id: menu_affiliate.id,
+    label: 'Listar',
+    link: '/affiliates/list',
+    icon: nil,
+    users_allowed: :admin
+  )
   # Fechamendo Admin menu
   # Abertura Tenant menu
   menu_company = Menu.create!(
     parent_id: nil,
     label: 'Empresas',
     link: '#',
-    icon: nil,
+    icon: 'bx bxs-factory',
     users_allowed: 'tenant | employee'
   )
   Menu.create!(
@@ -281,7 +302,7 @@ puts 'Iniciado criação do menu'
     parent_id: nil,
     label: 'Colaboradores',
     link: '#',
-    icon: nil,
+    icon: 'bx bx-user-circle',
     users_allowed: :tenant
   )
   Menu.create!(
