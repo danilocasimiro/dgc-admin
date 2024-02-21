@@ -14,6 +14,17 @@ class Tenant < ApplicationRecord
 
   validates_presence_of :name
 
+  scope :accessible_by_user, lambda { |user|
+                               case user.type.to_s
+                               when 'Admin'
+                                 all
+                               when 'Affiliate'
+                                 where(affiliate_id: user.profile_id)
+                               else
+                                 raise ForbiddenError
+                               end
+                             }
+
   def current_subscription
     config = SystemConfiguration.first
     subscriptions.where(status: :active).where('end_at >= ?', Time.zone.today - config.grace_period_days).first

@@ -7,14 +7,18 @@ class TenantsController < BaseController
   before_action :user_authenticate?, :allow_access?, except: %i[create]
 
   def index
-    @models =
-      current_user.admin? ? model_class.all : model_class.find(current_user.profile.id)
+    @models = model_class.accessible_by_user(current_user)
 
     render json: paginate(@models)
+  rescue ForbiddenError
+    raise ForbiddenError
   end
 
   def create
-    @model = model_class.create!(permitted_params)
+    tenant_data = permitted_params.slice(*model_class.column_names.map(&:to_sym))
+    tenant_data[:affiliate_id] = current_user.profile_id if current_user.type == Affiliate
+
+    @model = model_class.create!(tenant_data)
     create_user
     send_email
     render json: @model
