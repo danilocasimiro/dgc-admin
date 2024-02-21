@@ -28,7 +28,7 @@ module PaginationSerializer
   end
 
   def total_pages
-    collection_length = @collection.count
+    collection_length = @collection.respond_to?(:count) ? @collection.count : 0
 
     response.headers['Total-Pages'] =
       collection_length.positive? ? (collection_length.to_f / PER_PAGE).ceil : 0
