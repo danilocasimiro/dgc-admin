@@ -16,5 +16,9 @@ FactoryBot.define do
       factory :employee_user do
         association :profile, factory: :employee
       end
+
+      factory :affiliate_user do
+        association :profile, factory: :affiliate
+      end
   end
 end

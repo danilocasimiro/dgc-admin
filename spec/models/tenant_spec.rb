@@ -18,7 +18,40 @@ RSpec.describe Tenant do
     it { is_expected.to validate_presence_of(:name) }
   end
 
-  describe "#allow_access?" do
+  describe '.accessible_by_user' do
+    let(:affiliate) { create(:affiliate) }
+
+    before do
+      create_list(:tenant, 3)
+      create_list(:tenant, 2, affiliate:)
+    end
+    
+    context 'when user type is Admin' do
+      let(:admin_user) { create(:user) }
+
+      it 'returns all tenants' do
+        expect(described_class.accessible_by_user(admin_user).count).to eq(5)
+      end
+    end
+
+    context 'when user type is Affiliate' do
+      let(:affiliate_user) { affiliate.user }
+
+      it 'returns associated tenants' do
+        expect(described_class.accessible_by_user(affiliate_user).count).to eq(2)
+      end
+    end
+
+    context 'when user type does not have access' do
+      let(:employee_user) { create(:employee_user) }
+
+      it 'raises ForbiddenError' do
+        expect { described_class.accessible_by_user(employee_user) }.to raise_error(ForbiddenError)
+      end
+    end
+  end
+
+  describe '#allow_access?' do
     before do
       allow(tenant).to receive(:current_subscription).and_return(nil)
       allow(tenant).to receive(:trial).and_return(trial)
