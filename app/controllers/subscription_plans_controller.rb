@@ -3,7 +3,8 @@
 class SubscriptionPlansController < BaseController
   include UserContext
 
-  before_action :set_resource, only: %i[show update destroy]
+  before_action :user_has_permission?, except: :index
+  before_action :set_resource, only: %i[show update]
 
   def index
     @models = model_class.all
@@ -12,6 +13,10 @@ class SubscriptionPlansController < BaseController
   end
 
   private
+
+  def user_has_permission?
+    raise ForbiddenError unless current_user.admin?
+  end
 
   def permitted_params
     params.require(:subscription_plan).permit(:name, :description, :activation_months, :price)

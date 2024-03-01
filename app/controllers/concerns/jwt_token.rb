@@ -11,12 +11,12 @@ module JwtToken
       jwt_token = JWT.decode(token, Figaro.env.jwt_secret, true, algorithm: 'HS256')
       jwt_token.first.is_a?(Array) ? jwt_token.first : jwt_token
     rescue JWT::DecodeError
-      render json: { error: 'Necessário autenticação' }, status: :unauthorized
+      raise UnauthorizedError, 'Necessário autenticação'
     end
   end
 
   # rubocop:disable Metrics/MethodLength
-  def generate_token(user, company_id = nil)
+  def self.generate_token(user, company_id = nil)
     company = Company.find(company_id) if company_id
 
     JWT.encode({
@@ -57,9 +57,7 @@ module JwtToken
     feth_decoded_jwt.find { |token| token.key? 'user' }
   end
 
-  def subscription_status(user)
-    return 'active' if user.admin?
-
-    user.profile.allow_access? ? 'active' : nil
+  def self.subscription_status(user)
+    user.needs_subscription_to_access && user.profile.allow_access? ? 'active' : nil
   end
 end

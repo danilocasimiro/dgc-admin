@@ -11,8 +11,6 @@ RSpec.describe Subscription do
   end
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:start_at) }
-
     it "validates the status enum values" do
       expect define_enum_for(:status).with_values(%i[active inactive suspended pending])
     end

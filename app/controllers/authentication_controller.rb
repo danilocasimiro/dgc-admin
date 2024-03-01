@@ -10,17 +10,17 @@ class AuthenticationController < ApplicationController
       UserRegistrationMailer.send_email(user, origin).deliver_now
       render json: { error: "Usuário inativo. Um novo email foi encaminhado para #{params[:email_address]} para realizar a ativação de sua conta." }, status: :unauthorized
     else
-      render json: generate_token(user)
+      render json: JwtToken.generate_token(user)
     end
   end
 
   def company_auth
-    validate_company
     decoded_token = feth_decoded_jwt
+    validate_company
 
     user = User.find(decoded_token&.first&.dig('user', 'id'))
 
-    render json: generate_token(user, params[:company_id])
+    render json: JwtToken.generate_token(user, params[:company_id])
   end
 
   def logout_company_auth
@@ -28,7 +28,7 @@ class AuthenticationController < ApplicationController
 
     user = User.find(decoded_token&.first&.dig('user', 'id'))
 
-    render json: generate_token(user)
+    render json: JwtToken.generate_token(user)
   end
 
   private

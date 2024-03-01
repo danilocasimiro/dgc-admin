@@ -12,7 +12,7 @@ class Subscription < ApplicationRecord
 
   validates :status, inclusion: { in: Subscription.statuses.keys }
 
-  validates_presence_of :status, :start_at
+  validates_presence_of :status
   validate :start_at_cannot_be_greater_than_end_date
 
   private

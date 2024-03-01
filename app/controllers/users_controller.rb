@@ -4,7 +4,6 @@ class UsersController < BaseController
   include UserContext
 
   before_action :set_resource, only: %i[show update]
-
   before_action :user_authenticate?, :allow_access?, except: %i[activate password_recovery update_password]
 
   def show
@@ -36,6 +35,8 @@ class UsersController < BaseController
 
     validator.update!(status: 2)
     validator.user.update!(status: 0)
+
+    head :ok
   end
 
   def password_recovery
@@ -46,6 +47,8 @@ class UsersController < BaseController
 
     validator = create_validator
     send_email(validator.token)
+
+    head :ok
   end
 
   def update_password
@@ -56,6 +59,8 @@ class UsersController < BaseController
     )
     validator.user.update!(password: update_password_params[:password])
     validator.update!(status: 2)
+
+    head :ok
   end
 
   private
@@ -93,5 +98,9 @@ class UsersController < BaseController
       validation_type: 1,
       status: 0
     )
+  end
+
+  def user_has_permission?
+    current_user.admin? || current_user.id == params[:id].to_i
   end
 end

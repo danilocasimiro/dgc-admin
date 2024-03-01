@@ -11,11 +11,13 @@ module UserContext
   private
 
   def allow_access?
-    return unless current_user.profile
-
-    return if current_user.profile.allow_access?
+    return if user_has_active_subscription
 
     render json: { error: 'Sua assinatura está expirada. Por favor, realize uma nova assinatura.' },
            status: :unauthorized
+  end
+
+  def user_has_active_subscription
+    !current_user.needs_subscription_to_access || current_user.profile.allow_access?
   end
 end

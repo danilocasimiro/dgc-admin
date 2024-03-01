@@ -11,8 +11,6 @@ class User < ApplicationRecord
 
   belongs_to :profile, polymorphic: true, optional: true
 
-  validates :email_address, presence: true, uniqueness: true
-
   has_many :validations, inverse_of: :user, dependent: :destroy
 
   delegate :status, to: :last_subscription, prefix: true, allow_nil: true
@@ -22,12 +20,20 @@ class User < ApplicationRecord
   enum status: { active: 0, inactive: 1 }
 
   validates_presence_of :email_address, :password_digest, :status
+
+  validates :email_address, presence: true, uniqueness: true
   validates :email_address, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  before_create :set_friendly_id
+  before_create :set_friendly_id, :uniqueness_profile_type_and_profile_id
 
   def admin?
     profile.nil?
+  end
+
+  def uniqueness_profile_type_and_profile_id
+    if User.where(profile_type:, profile_id:).exists?
+      errors.add(:profile_type, "Já existe a associação.")
+    end
   end
 
   def password
@@ -62,6 +68,10 @@ class User < ApplicationRecord
 
   def affiliate?
     profile&.is_a?(Affiliate)
+  end
+
+  def needs_subscription_to_access
+    tenant? || employee?
   end
 
   def menu(company = false)

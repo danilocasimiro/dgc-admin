@@ -23,10 +23,4 @@ RSpec.describe Affiliate do
       expect(described_class.relation_map).to match_array(expected_relations)
     end
   end
-
-  describe "#allow_access?" do
-    it "allows access" do
-      expect(affiliate.allow_access?).to eq(true)
-    end
-  end
 end

@@ -4,7 +4,9 @@ class CompanyEmailTemplate < ApplicationRecord
 
   validates_presence_of :subject, :body
 
-  validate :unique_email_template_company_combination
+  validate :unique_email_template_company_combination, on: :create
+
+  scope :with_company_id, ->(company_id) { where(company_id:) }
 
   private
 

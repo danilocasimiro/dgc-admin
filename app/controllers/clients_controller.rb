@@ -4,6 +4,7 @@ class ClientsController < BaseController
   include CompanyContext
 
   before_action :set_resource, only: %i[show update destroy]
+  before_action :user_has_permission?
 
   def index
     @models = model_class.with_company_id(current_company_id)
@@ -16,6 +17,7 @@ class ClientsController < BaseController
     create_user
     store_address
     associate_with_company
+    send_email
 
     render json: @model
   end
@@ -30,11 +32,15 @@ class ClientsController < BaseController
 
   private
 
-  def user_params
-    params.permit(:email_address, :password)
+  def user_has_permission?
+    raise ForbiddenError unless current_user.tenant? || current_user.employee?
   end
 
-  def client_params
+  def user_params
+    params.require(:user).permit(%i[email_address password])
+  end
+
+  def permitted_params
     params.require(:client).permit(:name)
   end
 
@@ -44,5 +50,13 @@ class ClientsController < BaseController
 
   def associate_with_company
     @model.associate_with_company(current_company_id)
+  end
+
+  def send_email
+    return unless @model.persisted?
+
+    origin = request.headers['Origin'] || request.headers['Referer']
+
+    UserRegistrationMailer.send_email(@model.user, origin).deliver_now
   end
 end

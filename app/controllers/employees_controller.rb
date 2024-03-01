@@ -6,6 +6,8 @@ class EmployeesController < BaseController
   before_action :set_resource, only: %i[show update destroy]
 
   def index
+    raise ForbiddenError unless current_user.tenant? || current_user.employee?
+
     @models =
       current_user.profile.is_a?(Tenant) ? current_user.profile.employees : current_user.profile.tenant.employees
     if current_company_id
@@ -16,6 +18,8 @@ class EmployeesController < BaseController
   end
 
   def create
+    raise ForbiddenError unless current_user.tenant?
+
     @model = model_class.create!(permitted_params.merge(tenant_id: current_user.profile.id))
     create_user
     update_companies_employees
@@ -26,7 +30,7 @@ class EmployeesController < BaseController
 
   def update
     @model.update!(permitted_params)
-    update_user
+    update_user if params[:user]
     update_companies_employees
 
     render json: @model
@@ -63,5 +67,15 @@ class EmployeesController < BaseController
     origin = request.headers['Origin'] || request.headers['Referer']
 
     UserRegistrationMailer.send_email(@model.user, origin).deliver_now
+  end
+
+  def set_resource
+    raise ForbiddenError unless current_user.tenant? || current_user.employee?
+    
+    if current_user.employee? && current_user.profile.id.to_s != params[:id]
+      raise ForbiddenError, "Employee can't access other profiles"
+    end
+
+    @model = model_class.find(params[:id])
   end
 end

@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       get :maintenance_mode
     end
   end
-  resources :subscriptions, only: %i[index create]
+  resources :subscriptions, only: %i[index create update]
   resources :companies, except: %i[new edit]
   resources :affiliates, except: %i[destroy]
   resources :clients, except: %i[new edit]

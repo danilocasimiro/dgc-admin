@@ -3,7 +3,7 @@
 class AffiliatesController < BaseController
   include UserContext
 
-  before_action :admin?, only: :create
+  before_action :admin?, only: %i[create index]
   before_action :set_resource, only: %i[show update]
 
   def index

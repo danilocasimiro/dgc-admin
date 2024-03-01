@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class SystemConfigurationsController < BaseController
+  include UserContext
+
+  before_action :user_authenticate?, :allow_access?, except: %i[maintenance_mode]
   before_action :set_resource, only: %i[update show]
 
   def maintenance_mode

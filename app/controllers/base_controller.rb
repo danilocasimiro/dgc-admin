@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class BaseController < ApplicationController
-  include HandleErrors
   include PaginationSerializer
 
   def show
@@ -37,7 +36,7 @@ class BaseController < ApplicationController
   end
 
   def update_user
-    @model.user.update!(user_params.reject { |_, value| value.blank? }) if user_params
+    @model.user.update!(user_params.reject { |_, value| value.blank? }) if params[:user]
   end
 
   def store_address
@@ -78,6 +77,6 @@ class BaseController < ApplicationController
   end
 
   def user_has_permission?
-    current_user.admin? || current_user.id == params[:id].to_i
+    current_user.admin? || current_user.profile_id == params[:id].to_i
   end
 end

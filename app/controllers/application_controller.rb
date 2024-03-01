@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::API
   include JwtToken
+  include HandleErrors
 
   around_action :wrap_in_transaction
 

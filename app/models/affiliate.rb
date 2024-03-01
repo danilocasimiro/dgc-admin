@@ -5,10 +5,6 @@ class Affiliate < ApplicationRecord
 
   validates_presence_of :name
 
-  def allow_access?
-    true
-  end
-
   class << self
     def relation_map
       %i[user]

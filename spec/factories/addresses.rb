@@ -5,14 +5,14 @@ FactoryBot.define do
     neighborhood { "#{Faker::Address.city_prefix} #{Faker::Address.city_suffix}" }
     city { Faker::Address.city }
     state { Faker::Address.state_abbr }
-    zip_code { Faker::Address.zip_code }
+    zip_code { '00000-000' }
 
-  end
-  factory :client_address, parent: :address do
-    association :addressable, factory: :client
-  end
+    factory :client_address, parent: :address do
+      association :addressable, factory: :client
+    end
 
-  factory :company_address, parent: :address do
-    association :addressable, factory: :company
+    factory :company_address, parent: :address do
+      association :addressable, factory: :company
+    end
   end
 end
