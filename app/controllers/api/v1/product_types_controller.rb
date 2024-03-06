@@ -17,15 +17,19 @@ module Api
       private
 
       def user_has_permission?
-        raise ForbiddenError unless current_user.tenant? || current_user.employee?
+        return false if current_user.tenant? || current_user.employee?
+
+        raise ForbiddenError
       end
 
       def set_resource
-        @model = model_class.with_company_id(current_company_id).find(params[:id])
+        @model =
+          model_class.with_company_id(current_company_id).find(params[:id])
       end
 
       def permitted_params
-        params.require(:product_type).permit(:name).merge(company_id: current_company_id)
+        params.require(:product_type).permit(:name)
+              .merge(company_id: current_company_id)
       end
     end
   end

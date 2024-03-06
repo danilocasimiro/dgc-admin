@@ -10,12 +10,13 @@ RSpec.describe Validation do
   end
 
   describe 'validations' do
-    it "validates the status enum values" do
+    it 'validates the status enum values' do
       expect define_enum_for(:status).with_values(%i[pending canceled used])
     end
 
-    it "validates the validation_type enum values" do
-      expect define_enum_for(:validation_type).with_values(%i[registration password_recovery])
+    it 'validates the validation_type enum values' do
+      expect define_enum_for(:validation_type)
+        .with_values(%i[registration password_recovery])
     end
   end
 end

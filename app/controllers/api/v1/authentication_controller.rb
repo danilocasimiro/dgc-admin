@@ -3,16 +3,18 @@
 module Api
   module V1
     class AuthenticationController < ApplicationController
+      before_action :user_authenticate, only: :authenticate
+
       def authenticate
-        user = User.authenticate(params[:email_address], params[:password])
-        if !user
-          render json: { error: 'Credenciais inválidas.' }, status: :unauthorized
-        elsif !user.active?
-          origin = request.headers['Origin'] || request.headers['Referer']
-          UserRegistrationMailer.send_email(user, origin).deliver_now
-          render json: { error: "Usuário inativo. Um novo email foi encaminhado para #{params[:email_address]} para realizar a ativação de sua conta." }, status: :unauthorized
+        if !@user
+          render_error('Credenciais inválidas.')
+        elsif !@user.active?
+          send_email
+          render_error(`Usuário inativo. Um novo email foi encaminhado
+          para #{params[:email_address]} para realizar a ativação
+          de sua conta.`)
         else
-          render json: Concerns::JwtToken.generate_token(user)
+          render json: Concerns::JwtToken.generate_token(@user)
         end
       end
 
@@ -22,7 +24,8 @@ module Api
 
         user = User.find(decoded_token&.first&.dig('user', 'id'))
 
-        render json: Concerns::JwtToken.generate_token(user, params[:company_id])
+        render json: Concerns::JwtToken.generate_token(user,
+                                                       params[:company_id])
       end
 
       def logout_company_auth
@@ -35,8 +38,21 @@ module Api
 
       private
 
+      def user_authenticate
+        @user = User.authenticate(params[:email_address], params[:password])
+      end
+
       def validate_company
         current_user.profile.companies.find(params[:company_id])
+      end
+
+      def send_email
+        origin = request.headers['Origin'] || request.headers['Referer']
+        UserRegistrationMailer.send_email(@user, origin).deliver_now
+      end
+
+      def render_error(error_msg)
+        render json: { error: error_msg }, status: :unauthorized
       end
     end
   end

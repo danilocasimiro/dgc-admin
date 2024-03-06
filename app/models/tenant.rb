@@ -26,8 +26,10 @@ class Tenant < ApplicationRecord
                              }
 
   def current_subscription
-    config = SystemConfiguration.first
-    subscriptions.where(status: :active).where('end_at >= ?', Time.zone.today - config.grace_period_days).first
+    conf = SystemConfiguration.first
+    subscriptions.where(status: :active)
+                 .where('end_at >= ?', Time.zone.today - conf.grace_period_days)
+                 .first
   end
 
   def last_subscription
@@ -35,9 +37,9 @@ class Tenant < ApplicationRecord
   end
 
   def allow_access?
-    config = SystemConfiguration.first
+    conf = SystemConfiguration.first
 
-    Date.today < (trial.end_at + config.grace_period_days) || current_subscription
+    Date.today < (trial.end_at + conf.grace_period_days) || current_subscription
   end
 
   private
@@ -45,7 +47,8 @@ class Tenant < ApplicationRecord
   def create_trial
     transaction do
       current_date = Date.today
-      build_trial({ start_at: current_date, end_at: current_date.next_month }).save!
+      build_trial({ start_at: current_date, end_at: current_date.next_month })
+        .save!
     rescue ActiveRecord::RecordInvalid => e
       errors.add(:base, "Erro ao criar dado na outra tabela: #{e.message}")
       raise ActiveRecord::Rollback

@@ -18,15 +18,18 @@ RSpec.describe Company do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:tenant_id).case_insensitive }
+    it do
+      is_expected.to validate_uniqueness_of(:name).scoped_to(:tenant_id)
+                                                  .case_insensitive
+    end
   end
 
-  describe ".with_user_id" do
+  describe '.with_user_id' do
     let(:user) { build(:user) }
-    let(:tenant) { build(:tenant, user: user) }
+    let(:tenant) { build(:tenant, user:) }
 
-    it "returns companies associated with the specified user_id" do
-      associated_companies = create_list(:company, 3, tenant: tenant)
+    it 'returns companies associated with the specified user_id' do
+      associated_companies = create_list(:company, 3, tenant:)
 
       create_list(:company, 2)
 
@@ -35,7 +38,7 @@ RSpec.describe Company do
       expect(companies).to match_array(associated_companies)
     end
 
-    it "does not return companies associated with other user_ids" do
+    it 'does not return companies associated with other user_ids' do
       create_list(:company, 3)
 
       companies = described_class.with_user_id(user.id)
@@ -44,13 +47,13 @@ RSpec.describe Company do
     end
   end
 
-  describe ".relation_map" do
-    it "returns an array of symbols" do
+  describe '.relation_map' do
+    it 'returns an array of symbols' do
       expect(described_class.relation_map).to be_an(Array)
       expect(described_class.relation_map).to all(be_a(Symbol))
     end
 
-    it "returns expected relation symbols" do
+    it 'returns expected relation symbols' do
       expected_relations = %i[clients tenant address]
       expect(described_class.relation_map).to match_array(expected_relations)
     end

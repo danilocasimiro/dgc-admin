@@ -18,16 +18,18 @@ RSpec.describe Address do
     it { is_expected.to validate_presence_of(:zip_code) }
   end
 
-  it "validates the format of zip_code" do
-    subject.zip_code = "12345-678"
+  it 'validates the format of zip_code' do
+    subject.zip_code = '12345-678'
 
     expect(address).to be_valid
   end
 
-  it "invalidates incorrect format of zip_code" do
-    subject.zip_code ="12345"
+  it 'invalidates incorrect format of zip_code' do
+    subject.zip_code = '12345'
 
     expect(address).not_to be_valid
-    expect(address.errors[:zip_code]).to include("formato de CEP inválido. Use o formato: XXXXX-XXX")
+    expect(address.errors[:zip_code]).to include(
+      'Formato de CEP inválido. Use o formato: XXXXX-XXX'
+    )
   end
 end

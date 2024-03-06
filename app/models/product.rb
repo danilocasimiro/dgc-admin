@@ -6,7 +6,9 @@ class Product < ApplicationRecord
   validates_presence_of :name, :price
   validates :price, numericality: { greater_than_or_equal_to: 0 }
 
-  scope :with_company_id, ->(company_id) { joins(:product_type).where(product_type: { company_id: }) }
+  scope :with_company_id, lambda { |company_id|
+    joins(:product_type).where(product_types: { company_id: })
+  }
 
   class << self
     def relation_map

@@ -39,7 +39,9 @@ module Api
       def set_resource
         raise ForbiddenError unless current_user.tenant?
 
-        @model = model_class.with_tenant_id(current_user.profile_id).where(tenant_id: current_user.profile.id)
+        @model =
+          model_class.with_tenant_id(current_user.profile_id)
+                     .where(tenant_id: current_user.profile.id)
       end
     end
   end

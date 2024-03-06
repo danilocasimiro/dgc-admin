@@ -11,8 +11,9 @@ RSpec.describe Subscription do
   end
 
   describe 'validations' do
-    it "validates the status enum values" do
-      expect define_enum_for(:status).with_values(%i[active inactive suspended pending])
+    it 'validates the status enum values' do
+      expect define_enum_for(:status)
+        .with_values(%i[active inactive suspended pending])
     end
 
     it 'validates that end_at is greater than start_at' do
@@ -30,49 +31,50 @@ RSpec.describe Subscription do
     end
   end
 
-  describe ".with_tenant_id" do
+  describe '.with_tenant_id' do
     let(:tenant_id) { 1 }
-    let(:tenant) { create(:tenant, id: tenant_id) }  
+    let(:tenant) { create(:tenant, id: tenant_id) }
 
-    it "returns records associated with the specified tenant_id" do
-      record = create(:subscription, tenant: tenant)
+    it 'returns records associated with the specified tenant_id' do
+      record = create(:subscription, tenant:)
 
       expect(described_class.with_tenant_id(tenant_id)).to include(record)
     end
 
-    it "does not return records associated with other tenant_id" do
+    it 'does not return records associated with other tenant_id' do
       record = create(:subscription)
 
       expect(described_class.with_tenant_id(tenant_id)).not_to include(record)
     end
   end
 
-  describe "before_save callbacks" do
-    let(:subscription) { create(:subscription, subscription_plan: subscription_plan) }
+  describe 'before_save callbacks' do
+    let(:subscription) { create(:subscription, subscription_plan:) }
     let(:subscription_plan) { create(:subscription_plan) }
 
     before do
       subscription.save
     end
 
-    it "sets start_at to today's date before saving" do
+    it 'sets start_at to todays date before saving' do
       expect(subscription.start_at).to eq Date.today
     end
 
-    it "sets end_at based on activation months before saving" do
-      expected_end_date = Date.today.advance(months: subscription_plan.activation_months)
+    it 'sets end_at based on activation months before saving' do
+      expected_end_date =
+        Date.today.advance(months: subscription_plan.activation_months)
 
       expect(subscription.end_at).to eq expected_end_date
     end
   end
 
-  describe ".relation_map" do
-    it "returns an array of symbols" do
+  describe '.relation_map' do
+    it 'returns an array of symbols' do
       expect(described_class.relation_map).to be_an(Array)
       expect(described_class.relation_map).to all(be_a(Symbol))
     end
 
-    it "returns expected relation symbols" do
+    it 'returns expected relation symbols' do
       expected_relations = %i[subscription_plan tenant]
       expect(described_class.relation_map).to match_array(expected_relations)
     end

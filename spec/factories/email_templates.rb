@@ -3,7 +3,7 @@ FactoryBot.define do
     subject { Faker::Lorem.sentence }
     body { Faker::Lorem.paragraph }
     allow_variables { 'first_variable | second_variable | third_variable' }
-  
+
     factory :user_register_email_template_action do
       action { 'user_register' }
     end

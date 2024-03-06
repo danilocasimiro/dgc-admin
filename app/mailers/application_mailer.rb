@@ -13,11 +13,11 @@ class ApplicationMailer < ActionMailer::Base
 
     ActionMailer::Base.delivery_method = :smtp
     ActionMailer::Base.smtp_settings = {
-      address:              smtp_email_config.address,
-      port:                 smtp_email_config.port,
-      user_name:            smtp_email_config.user_name,
-      password:             smtp_email_config.password,
-      authentication:       smtp_email_config.authentication,
+      address: smtp_email_config.address,
+      port: smtp_email_config.port,
+      user_name: smtp_email_config.user_name,
+      password: smtp_email_config.password,
+      authentication: smtp_email_config.authentication,
       enable_starttls_auto: true
     }
   end

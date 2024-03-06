@@ -31,9 +31,9 @@ class User < ApplicationRecord
   end
 
   def uniqueness_profile_type_and_profile_id
-    if User.where(profile_type:, profile_id:).exists?
-      errors.add(:profile_type, "Já existe a associação.")
-    end
+    return unless User.where(profile_type:, profile_id:).exists?
+
+    errors.add(:profile_type, 'Já existe a associação.')
   end
 
   def password
@@ -77,7 +77,9 @@ class User < ApplicationRecord
   def menu(company = false)
     menu_type = profile_type.nil? ? 'admin' : profile_type.downcase
 
-    Menu.where('users_allowed LIKE ? and company  = ?', "%#{menu_type}%", !!company)
+    Menu.where(
+      'users_allowed LIKE ? and company  = ?', "%#{menu_type}%", company
+    )
   end
 
   def expiration_date

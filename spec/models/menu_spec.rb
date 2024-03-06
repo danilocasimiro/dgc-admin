@@ -5,7 +5,10 @@ RSpec.describe Menu, type: :model do
 
   describe 'associations' do
     it { is_expected.to belong_to(:parent).optional }
-    it { should have_many(:children).class_name('Menu').with_foreign_key('parent_id') }
+    it do
+      expect have_many(:children).class_name('Menu')
+                                 .with_foreign_key('parent_id')
+    end
   end
 
   describe 'validations' do

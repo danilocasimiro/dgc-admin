@@ -8,7 +8,8 @@ module Api
       let(:token) { Concerns::JwtToken.generate_token(user) }
 
       let(:email_template) do
-        create(:user_register_email_template_action, subject: 'any_subject', body: 'any_body')
+        create(:user_register_email_template_action,
+               subject: 'any_subject', body: 'any_body')
       end
 
       describe 'GET #index' do
@@ -21,10 +22,11 @@ module Api
             let(:user) { create(:tenant_user) }
 
             before do
-              get "/api/v1/email_templates", headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/email_templates',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -33,10 +35,11 @@ module Api
             let(:user) { create(:employee_user) }
 
             before do
-              get "/api/v1/email_templates", headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/email_templates',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -45,9 +48,11 @@ module Api
             let(:user) { create(:user) }
 
             before do
-              create(:user_register_email_template_action, subject: 'any_subject', body: 'any_body')
+              create(:user_register_email_template_action,
+                     subject: 'any_subject', body: 'any_body')
 
-              get "/api/v1/email_templates", headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/email_templates',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'show a email template' do
@@ -60,10 +65,10 @@ module Api
 
         context 'when user is not logger in' do
           before do
-            get "/api/v1/email_templates"
+            get '/api/v1/email_templates'
           end
 
-          it "returns a success response" do
+          it 'returns a success response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -75,7 +80,8 @@ module Api
             before do
               create(:system_configuration)
 
-              get "/api/v1/email_templates/#{email_template.id}", headers: { 'Authorization': "Bearer #{token}" }
+              get "/api/v1/email_templates/#{email_template.id}",
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             context 'when user is a tenant' do
@@ -107,10 +113,10 @@ module Api
 
           context 'when email template is not found' do
             before do
-              get "/api/v1/email_templates/any_invalid_id"
+              get '/api/v1/email_templates/any_invalid_id'
             end
-      
-            it "returns a success response" do
+
+            it 'returns a success response' do
               expect(response).to have_http_status(:unauthorized)
             end
           end
@@ -121,7 +127,7 @@ module Api
             get "/api/v1/email_templates/#{email_template.id}"
           end
 
-          it "returns a success response" do
+          it 'returns a success response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -131,12 +137,16 @@ module Api
         context 'when user is logged in' do
           context 'when user is an admin' do
             let(:user) { create(:user) }
-            let(:email_template_params) { { subject: 'new_subject', body: 'new_body' } }
+            let(:email_template_params) do
+              { subject: 'new_subject', body: 'new_body' }
+            end
 
             before do
               create(:system_configuration)
 
-              put "/api/v1/email_templates/#{email_template.id}", params: { email_template: email_template_params}, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/email_templates/#{email_template.id}",
+                  params: { email_template: email_template_params },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new email_template' do
@@ -157,7 +167,8 @@ module Api
             end
 
             it 'returns a forbidden response' do
-              put "/api/v1/email_templates/#{email_template.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/email_templates/#{email_template.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -171,7 +182,8 @@ module Api
             end
 
             it 'returns a forbidden response' do
-              put "/api/v1/email_templates/#{email_template.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/email_templates/#{email_template.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -183,7 +195,7 @@ module Api
             put "/api/v1/email_templates/#{email_template.id}"
           end
 
-          it "returns a success response" do
+          it 'returns a success response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

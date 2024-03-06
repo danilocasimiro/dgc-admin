@@ -19,14 +19,15 @@ module Api
             before do
               create_list(:subscription_plan, 5)
 
-              get '/api/v1/subscription_plans', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/subscription_plans',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(5)
             end
@@ -38,14 +39,15 @@ module Api
             before do
               create_list(:subscription_plan, 1)
 
-              get '/api/v1/subscription_plans', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/subscription_plans',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(1)
             end
@@ -57,14 +59,15 @@ module Api
             before do
               create_list(:subscription_plan, 1)
 
-              get '/api/v1/subscription_plans', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/subscription_plans',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(1)
             end
@@ -76,7 +79,7 @@ module Api
             get '/api/v1/subscription_plans'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -92,7 +95,8 @@ module Api
             let(:user) { create(:tenant_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/subscription_plans', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/subscription_plans',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -102,7 +106,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/subscription_plans', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/subscription_plans',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -110,16 +115,22 @@ module Api
 
           context 'when user is an admin' do
             let(:user) { create(:user) }
-            let(:subscription_plan_params) { attributes_for(:subscription_plan) }
+            let(:subscription_plan_params) do
+              attributes_for(:subscription_plan)
+            end
 
             before do
-              post '/api/v1/subscription_plans', params: { subscription_plan: subscription_plan_params }, headers: { 'Authorization': "Bearer #{token}" }        
+              post '/api/v1/subscription_plans',
+                   params: { subscription_plan: subscription_plan_params },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new subscription_plan' do
               expect(response).to have_http_status(:ok)
               subscription_plan = SubscriptionPlan.last
-              expect(subscription_plan.name).to eq(subscription_plan_params[:name])
+              expect(subscription_plan.name).to eq(
+                subscription_plan_params[:name]
+              )
             end
           end
         end
@@ -129,7 +140,7 @@ module Api
             post '/api/v1/subscription_plans'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -147,7 +158,8 @@ module Api
             let(:user) { create(:tenant_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/subscription_plans/#{subscription_plan.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/subscription_plans/#{subscription_plan.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -157,7 +169,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/subscription_plans/#{subscription_plan.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/subscription_plans/#{subscription_plan.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -168,7 +181,9 @@ module Api
             let(:subscription_plan_params) { { name: 'new_name' } }
 
             before do
-              put "/api/v1/subscription_plans/#{subscription_plan.id}", params: { subscription_plan: subscription_plan_params }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/subscription_plans/#{subscription_plan.id}",
+                  params: { subscription_plan: subscription_plan_params },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new subscription_plan' do
@@ -177,7 +192,6 @@ module Api
               subscription_plan.reload
               expect(subscription_plan.name).to eq('new_name')
             end
-
           end
         end
 
@@ -186,7 +200,7 @@ module Api
             put "/api/v1/subscription_plans/#{subscription_plan.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

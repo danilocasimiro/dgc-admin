@@ -38,14 +38,20 @@ module Api
       end
 
       def update_user
-        @model.user.update!(user_params.reject { |_, value| value.blank? }) if params[:user]
+        return unless params[:user]
+
+        @model.user.update!(user_params.reject do |_, value|
+                              value.blank?
+                            end)
       end
 
       def store_address
         return unless addressable_params.present?
 
         Address.create!(
-          addressable_params[:address].merge({ addressable_id: @model.id, addressable_type: @model.class.name })
+          addressable_params[:address]
+          .merge({ addressable_id: @model.id,
+                   addressable_type: @model.class.name })
         )
       end
 
@@ -68,7 +74,8 @@ module Api
       end
 
       def addressable_params
-        params.permit(address: %i[street number neighborhood city state zip_code])
+        params.permit(address: %i[street number neighborhood city state
+                                  zip_code])
       end
 
       def include_associations

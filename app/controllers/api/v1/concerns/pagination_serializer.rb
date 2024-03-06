@@ -15,26 +15,38 @@ module Api
 
           return after if params[:after].present?
 
-          collection.order(:id).limit(PER_PAGE).as_json(include: include_associations)
+          collection.order(:id).limit(PER_PAGE)
+                    .as_json(include: include_associations)
         end
 
         def before
           @collection.where("#{@collection.table_name}.id < ?",
-                            params[:before]).order(id: :desc).limit(PER_PAGE).as_json(include: include_associations).reverse!
+                            params[:before])
+                     .order(id: :desc)
+                     .limit(PER_PAGE)
+                     .as_json(include: include_associations).reverse!
         end
 
         def after
           return unless params[:after].present?
 
           @collection.where("#{@collection.table_name}.id > ?",
-                            params[:after]).order(:id).limit(PER_PAGE).as_json(include: include_associations)
+                            params[:after])
+                     .order(:id)
+                     .limit(PER_PAGE)
+                     .as_json(include: include_associations)
         end
 
         def total_pages
-          collection_length = @collection.respond_to?(:count) ? @collection.count : 0
+          collection_length =
+            @collection.respond_to?(:count) ? @collection.count : 0
 
           response.headers['Total-Pages'] =
-            collection_length.positive? ? (collection_length.to_f / PER_PAGE).ceil : 0
+            if collection_length.positive?
+              (collection_length.to_f / PER_PAGE).ceil
+            else
+              0
+            end
         end
       end
     end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Api
   module V1
     module Concerns
@@ -6,11 +7,14 @@ module Api
         extend ActiveSupport::Concern
 
         included do
-          rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
+          rescue_from ActiveRecord::RecordNotFound,
+                      with: :handle_record_not_found
           rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
-          rescue_from ActiveRecord::RecordNotDestroyed, with: :handle_record_not_destroyed
-          rescue_from ActiveRecord::RecordNotSaved, with: :handle_record_not_saved
-          rescue_from ForbiddenError, with: :handle_forbidden_error 
+          rescue_from ActiveRecord::RecordNotDestroyed,
+                      with: :handle_record_not_destroyed
+          rescue_from ActiveRecord::RecordNotSaved,
+                      with: :handle_record_not_saved
+          rescue_from ForbiddenError, with: :handle_forbidden_error
           rescue_from UnauthorizedError, with: :handle_unauthorized
         end
 

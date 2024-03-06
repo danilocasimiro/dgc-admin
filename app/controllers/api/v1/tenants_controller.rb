@@ -6,6 +6,7 @@ module Api
       include Concerns::UserContext
 
       before_action :allow_access?, except: %i[create]
+      before_action :user_has_permission_to_create?, only: :create
       before_action :set_resource, only: %i[show update destroy]
 
       def index
@@ -15,10 +16,11 @@ module Api
       end
 
       def create
-        raise ForbiddenError unless current_user.admin? || current_user.affiliate?
-
-        tenant_data = permitted_params.slice(*model_class.column_names.map(&:to_sym))
-        tenant_data[:affiliate_id] = current_user.profile_id if current_user.affiliate?
+        tenant_data =
+          permitted_params.slice(*model_class.column_names.map(&:to_sym))
+        if current_user.affiliate?
+          tenant_data[:affiliate_id] = current_user.profile_id
+        end
 
         @model = model_class.create!(tenant_data)
         create_user
@@ -43,6 +45,12 @@ module Api
 
       def permitted_params
         params.require(:tenant).permit(:name)
+      end
+
+      def user_has_permission_to_create?
+        return false if current_user.admin? || current_user.affiliate?
+
+        raise ForbiddenError
       end
 
       def send_email

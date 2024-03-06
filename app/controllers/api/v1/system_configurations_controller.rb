@@ -5,7 +5,8 @@ module Api
     class SystemConfigurationsController < BaseController
       include Concerns::UserContext
 
-      before_action :user_authenticate?, :allow_access?, except: %i[maintenance_mode]
+      before_action :user_authenticate?, :allow_access?,
+                    except: %i[maintenance_mode]
       before_action :set_resource, only: %i[update show]
 
       def maintenance_mode
@@ -15,7 +16,8 @@ module Api
       private
 
       def permitted_params
-        params.require(:system_configuration).permit(%i[maintenance_mode grace_period_days])
+        params.require(:system_configuration)
+              .permit(%i[maintenance_mode grace_period_days])
       end
 
       def set_resource

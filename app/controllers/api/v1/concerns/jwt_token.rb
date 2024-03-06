@@ -8,10 +8,11 @@ module Api
 
         def feth_decoded_jwt
           header = request.headers['Authorization']
-          token = header&.split(' ')&.last
+          token = header&.split&.last
 
           begin
-            jwt_token = JWT.decode(token, Figaro.env.jwt_secret, true, algorithm: 'HS256')
+            jwt_token =
+              JWT.decode(token, Figaro.env.jwt_secret, true, algorithm: 'HS256')
             jwt_token.first.is_a?(Array) ? jwt_token.first : jwt_token
           rescue JWT::DecodeError
             raise UnauthorizedError, 'Necessário autenticação'
@@ -23,19 +24,19 @@ module Api
           company = Company.find(company_id) if company_id
 
           JWT.encode({
-                      user: {
-                        email_address: user.email_address,
-                        friendly_id: user.friendly_id,
-                        name: user.name,
-                        id: user.id,
-                        type: user.type,
-                        expiration_date: user.expiration_date,
-                        subscription_status: subscription_status(user),
-                        company_name: company&.name,
-                        company_id:,
-                        menu: user.menu(company).as_json
-                      }
-                    }, Figaro.env.jwt_secret, 'HS256')
+                       user: {
+                         email_address: user.email_address,
+                         friendly_id: user.friendly_id,
+                         name: user.name,
+                         id: user.id,
+                         type: user.type,
+                         expiration_date: user.expiration_date,
+                         subscription_status: subscription_status(user),
+                         company_name: company&.name,
+                         company_id:,
+                         menu: user.menu(company).as_json
+                       }
+                     }, Figaro.env.jwt_secret, 'HS256')
         end
         # rubocop:enable Metrics/MethodLength
 
@@ -44,7 +45,10 @@ module Api
         end
 
         def company_authenticate?
-          render json: { error: 'Necessário autenticação em uma empresa' }, status: :unauthorized unless current_company_id
+          return false if current_company_id
+
+          render json: { error: 'Necessário autenticação em uma empresa' },
+                 status: :unauthorized
         end
 
         def current_company_id
@@ -61,7 +65,10 @@ module Api
         end
 
         def self.subscription_status(user)
-          user.needs_subscription_to_access && user.profile.allow_access? ? 'active' : nil
+          if user.needs_subscription_to_access &&
+             user.profile.allow_access?
+            'active'
+          end
         end
       end
     end

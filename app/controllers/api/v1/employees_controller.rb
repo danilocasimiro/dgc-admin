@@ -5,15 +5,16 @@ module Api
     class EmployeesController < BaseController
       include Concerns::UserContext
 
+      before_action :user_has_permission?
       before_action :set_resource, only: %i[show update destroy]
 
       def index
-        raise ForbiddenError unless current_user.tenant? || current_user.employee?
-
-        @models =
-          current_user.profile.is_a?(Tenant) ? current_user.profile.employees : current_user.profile.tenant.employees
+        @models = current_user.profile.employees
         if current_company_id
-          render json: paginate(@models.includes(:companies).where(companies: { id: current_company_id }))
+          render json: paginate(
+            @models.includes(:companies)
+            .where(companies: { id: current_company_id })
+          )
         else
           render json: paginate(@models)
         end
@@ -22,7 +23,9 @@ module Api
       def create
         raise ForbiddenError unless current_user.tenant?
 
-        @model = model_class.create!(permitted_params.merge(tenant_id: current_user.profile.id))
+        @model = model_class.create!(
+          permitted_params.merge(tenant_id: current_user.profile.id)
+        )
         create_user
         update_companies_employees
         send_email
@@ -59,7 +62,9 @@ module Api
         @model.companies_employees.destroy_all
 
         companies_params[:companies].each do |company|
-          CompanyEmployee.create!(company_id: company[:id], employee_id: @model.id)
+          CompanyEmployee.create!(
+            company_id: company[:id], employee_id: @model.id
+          )
         end
       end
 
@@ -71,9 +76,13 @@ module Api
         UserRegistrationMailer.send_email(@model.user, origin).deliver_now
       end
 
+      def user_has_permission?
+        return false if current_user.tenant? || current_user.employee?
+
+        raise ForbiddenError
+      end
+
       def set_resource
-        raise ForbiddenError unless current_user.tenant? || current_user.employee?
-        
         if current_user.employee? && current_user.profile.id.to_s != params[:id]
           raise ForbiddenError, "Employee can't access other profiles"
         end

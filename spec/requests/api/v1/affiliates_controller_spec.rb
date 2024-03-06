@@ -15,14 +15,15 @@ module Api
             before do
               create_list(:affiliate, 3)
 
-              get '/api/v1/affiliates', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/affiliates',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(3)
             end
@@ -32,7 +33,8 @@ module Api
             let(:user) { create(:affiliate_user) }
 
             it 'returns a forbidden response' do
-              get '/api/v1/affiliates', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/affiliates',
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -44,7 +46,7 @@ module Api
             get '/api/v1/affiliates'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -56,17 +58,21 @@ module Api
             let(:user) { create(:user) }
             let(:affiliate_params) { attributes_for(:affiliate) }
             let(:user_registration_mailer) { double('UserRegistrationMailer') }
-            let(:user_data) do 
-              { 
+            let(:user_data) do
+              {
                 email_address: 'any_email@example.com', password: 'any_password'
               }
             end
 
             before do
-              expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-              expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+              expect(UserRegistrationMailer).to receive(:send_email)
+                .and_return(user_registration_mailer)
+              expect(user_registration_mailer).to receive(:deliver_now)
+                .and_return(true)
 
-              post '/api/v1/affiliates', params: { affiliate: affiliate_params, user: user_data}, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/affiliates',
+                   params: { affiliate: affiliate_params, user: user_data },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new affiliate' do
@@ -79,7 +85,8 @@ module Api
             let(:user) { create(:affiliate_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/affiliates', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/affiliates',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -91,7 +98,7 @@ module Api
             post '/api/v1/affiliates'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -104,10 +111,12 @@ module Api
           context 'when user is an admin' do
             let(:user) { create(:user) }
             let(:affiliate_params) { { name: 'new_name' } }
-            let(:user_data) { { email_address: 'new_email@example.com' } }
+            let(:user_data) { { email_address: 'email@example.com' } }
 
             before do
-              put "/api/v1/affiliates/#{affiliate.id}", params: { affiliate: affiliate_params, user: user_data}, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/affiliates/#{affiliate.id}",
+                  params: { affiliate: affiliate_params, user: user_data },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new affiliate' do
@@ -115,7 +124,7 @@ module Api
               expect(response.body).to include(affiliate_params[:name])
               affiliate.reload
               expect(affiliate.name).to eq('new_name')
-              expect(affiliate.user.email_address).to eq('new_email@example.com')
+              expect(affiliate.user.email_address).to eq('email@example.com')
             end
           end
 
@@ -123,7 +132,8 @@ module Api
             let(:user) { create(:client_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/affiliates/#{affiliate.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/affiliates/#{affiliate.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -135,7 +145,7 @@ module Api
             put "/api/v1/affiliates/#{affiliate.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

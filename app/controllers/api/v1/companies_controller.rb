@@ -8,7 +8,9 @@ module Api
       before_action :set_resource, only: %i[show destroy update]
 
       def index
-        raise ForbiddenError unless current_user.tenant? || current_user.employee?
+        unless current_user.tenant? || current_user.employee?
+          raise ForbiddenError
+        end
 
         @models = current_user.profile.companies
 
@@ -18,7 +20,9 @@ module Api
       def create
         raise ForbiddenError unless current_user.tenant?
 
-        @model = model_class.create!(permitted_params.merge(tenant_id: current_user.profile_id))
+        @model = model_class.create!(
+          permitted_params.merge(tenant_id: current_user.profile_id)
+        )
         store_address
 
         render json: @model
@@ -34,7 +38,9 @@ module Api
       private
 
       def set_resource
-        raise ForbiddenError unless current_user.tenant? || current_user.employee?
+        unless current_user.tenant? || current_user.employee?
+          raise ForbiddenError
+        end
 
         @model = current_user.profile.companies.find(params[:id])
       end

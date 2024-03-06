@@ -20,10 +20,11 @@ module Api
             before do
               create_list(:product, 1)
 
-              get '/api/v1/products', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/products',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -36,14 +37,15 @@ module Api
               create_list(:product, 3)
               create_list(:product, 5, product_type:)
 
-              get '/api/v1/products', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/products',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(5)
             end
@@ -57,14 +59,15 @@ module Api
               create_list(:product, 3)
               create_list(:product, 4, product_type:)
 
-              get '/api/v1/products', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/products',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(4)
             end
@@ -76,7 +79,7 @@ module Api
             get '/api/v1/products'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -92,10 +95,14 @@ module Api
 
           context 'when user is a tenant' do
             let(:user) { create(:tenant_user) }
-            let(:product_params) { attributes_for(:product) }
+            let(:product_params) do
+              attributes_for(:product).merge(product_type_id: product_type.id)
+            end
 
             before do
-              post '/api/v1/products', params: { product: product_params.merge(product_type_id: product_type.id) }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/products',
+                   params: { product: product_params },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new product' do
@@ -107,10 +114,14 @@ module Api
 
           context 'when user is a employee' do
             let(:user) { create(:employee_user) }
-            let(:product_params) { attributes_for(:product) }
+            let(:product_params) do
+              attributes_for(:product).merge(product_type_id: product_type.id)
+            end
 
             before do
-              post '/api/v1/products', params: { product: product_params.merge(product_type_id: product_type.id) }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/products',
+                   params: { product: product_params },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new product' do
@@ -124,7 +135,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/products', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/products',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -136,14 +148,14 @@ module Api
             post '/api/v1/products'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
       end
 
       describe 'PUT #update' do
-        let(:product_type) { create(:product_type, company:)}
+        let(:product_type) { create(:product_type, company:) }
         let(:product) { create(:product, product_type:) }
 
         context 'when user is logged in' do
@@ -156,7 +168,9 @@ module Api
             let(:product_params) { { name: 'new_name' } }
 
             before do
-              put "/api/v1/products/#{product.id}", params: { product: product_params }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/products/#{product.id}",
+                  params: { product: product_params },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new product' do
@@ -172,7 +186,9 @@ module Api
             let(:product_params) { { name: 'new_name' } }
 
             before do
-              put "/api/v1/products/#{product.id}", params: { product: product_params }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/products/#{product.id}",
+                  params: { product: product_params },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new product' do
@@ -187,7 +203,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/products/#{product.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/products/#{product.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -199,7 +216,7 @@ module Api
             put "/api/v1/products/#{product.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

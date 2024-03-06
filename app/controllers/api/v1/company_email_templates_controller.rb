@@ -15,7 +15,9 @@ module Api
       private
 
       def user_has_permission?
-        raise ForbiddenError unless current_user.tenant? || current_user.employee?
+        return false if current_user.tenant? || current_user.employee?
+
+        raise ForbiddenError
       end
 
       def permitted_params
@@ -23,7 +25,8 @@ module Api
       end
 
       def set_resource
-        @model = model_class.with_company_id(current_company_id).find(params[:id])
+        @model =
+          model_class.with_company_id(current_company_id).find(params[:id])
       end
     end
   end

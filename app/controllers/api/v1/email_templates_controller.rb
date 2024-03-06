@@ -5,7 +5,7 @@ module Api
     class EmailTemplatesController < BaseController
       include Concerns::UserContext
 
-      before_action :is_admin?
+      before_action :admin?
       before_action :set_resource, only: %i[show update]
 
       def index
@@ -16,8 +16,8 @@ module Api
 
       private
 
-      def is_admin?
-        return if current_user.admin?
+      def admin?
+        return false if current_user.admin?
 
         raise ForbiddenError
       end

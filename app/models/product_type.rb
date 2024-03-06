@@ -6,7 +6,9 @@ class ProductType < ApplicationRecord
   has_many :products, inverse_of: :product_type, dependent: :destroy
 
   validates_presence_of :name
-  validates_uniqueness_of :name, scope: :company_id, uniqueness: { case_sensitive: false }
+  validates_uniqueness_of :name,
+                          scope: :company_id,
+                          uniqueness: { case_sensitive: false }
 
   scope :with_company_id, ->(company_id) { where(company_id:) }
 

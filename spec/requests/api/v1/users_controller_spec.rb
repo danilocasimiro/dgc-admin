@@ -26,7 +26,9 @@ module Api
               let(:user_params) { { email_address: 'new_email@example.com' } }
 
               before do
-                put "/api/v1/users/#{user.id}", params: { user: user_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{user.id}",
+                    params: { user: user_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new user' do
@@ -41,7 +43,8 @@ module Api
               let(:another_user) { create(:user) }
 
               it 'returns a forbidden response' do
-                put "/api/v1/users/#{another_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{another_user.id}",
+                    headers: { Authorization: "Bearer #{token}" }
 
                 expect(response).to have_http_status(:forbidden)
               end
@@ -55,7 +58,9 @@ module Api
               let(:user_params) { { email_address: 'new_email@example.com' } }
 
               before do
-                put "/api/v1/users/#{user.id}", params: { user: user_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{user.id}",
+                    params: { user: user_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new user' do
@@ -70,7 +75,8 @@ module Api
               let(:another_user) { create(:user) }
 
               it 'returns a forbidden response' do
-                put "/api/v1/users/#{another_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{another_user.id}",
+                    headers: { Authorization: "Bearer #{token}" }
 
                 expect(response).to have_http_status(:forbidden)
               end
@@ -84,7 +90,9 @@ module Api
               let(:user_params) { { email_address: 'new_email@example.com' } }
 
               before do
-                put "/api/v1/users/#{user.id}", params: { user: user_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{user.id}",
+                    params: { user: user_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new user' do
@@ -99,7 +107,8 @@ module Api
               let(:another_user) { create(:user) }
 
               it 'returns a forbidden response' do
-                put "/api/v1/users/#{another_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{another_user.id}",
+                    headers: { Authorization: "Bearer #{token}" }
 
                 expect(response).to have_http_status(:forbidden)
               end
@@ -112,7 +121,9 @@ module Api
 
             context 'when the user updates it' do
               before do
-                put "/api/v1/users/#{user.id}", params: { user: user_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{user.id}",
+                    params: { user: user_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new user' do
@@ -127,7 +138,9 @@ module Api
               let(:update_user) { create(:tenant_user) }
 
               before do
-                put "/api/v1/users/#{update_user.id}", params: { user: user_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/users/#{update_user.id}",
+                    params: { user: user_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new user' do
@@ -145,7 +158,7 @@ module Api
             put "/api/v1/users/#{user.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -159,7 +172,8 @@ module Api
             context 'when user is found' do
               context 'when the user sought is the logged in user' do
                 before do
-                  get "/api/v1/users/#{user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
                 it 'returns an user' do
@@ -172,7 +186,8 @@ module Api
                 let(:tenant_user) { create(:tenant_user) }
 
                 before do
-                  get "/api/v1/users/#{tenant_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{tenant_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
                 it 'returns an user' do
@@ -185,7 +200,8 @@ module Api
                 let(:affiliate) { create(:affiliate, user: create(:user)) }
 
                 before do
-                  get "/api/v1/users/#{affiliate.user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{affiliate.user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
                 it 'returns an user' do
@@ -198,7 +214,8 @@ module Api
                 let(:employee_user) { create(:employee_user) }
 
                 before do
-                  get "/api/v1/users/#{employee_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{employee_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
                 it 'returns an user' do
@@ -211,7 +228,8 @@ module Api
                 let(:client_user) { create(:client_user) }
 
                 before do
-                  get "/api/v1/users/#{client_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{client_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
                 it 'returns an user' do
@@ -223,10 +241,10 @@ module Api
 
             context 'when user is not found' do
               before do
-                get "/api/v1/users/any_invalid_id"
+                get '/api/v1/users/any_invalid_id'
               end
-        
-              it "returns a not found response" do
+
+              it 'returns a not found response' do
                 expect(response).to have_http_status(:not_found)
               end
             end
@@ -238,7 +256,8 @@ module Api
             context 'when user is found' do
               context 'when the user sought is the logged in user' do
                 before do
-                  get "/api/v1/users/#{user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
                 it 'returns an user' do
@@ -251,10 +270,11 @@ module Api
                 let(:tenant_user) { create(:tenant_user) }
 
                 before do
-                  get "/api/v1/users/#{tenant_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{tenant_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
-                it "returns a forbidden response" do
+                it 'returns a forbidden response' do
                   expect(response).to have_http_status(:forbidden)
                 end
               end
@@ -263,10 +283,11 @@ module Api
                 let(:affiliate_user) { create(:affiliate_user) }
 
                 before do
-                  get "/api/v1/users/#{affiliate_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{affiliate_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
-                it "returns a forbidden response" do
+                it 'returns a forbidden response' do
                   expect(response).to have_http_status(:forbidden)
                 end
               end
@@ -275,10 +296,11 @@ module Api
                 let(:employee_user) { create(:employee_user) }
 
                 before do
-                  get "/api/v1/users/#{employee_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{employee_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
-                it "returns a forbidden response" do
+                it 'returns a forbidden response' do
                   expect(response).to have_http_status(:forbidden)
                 end
               end
@@ -287,10 +309,11 @@ module Api
                 let(:client_user) { create(:client_user) }
 
                 before do
-                  get "/api/v1/users/#{client_user.id}", headers: { 'Authorization': "Bearer #{token}" }
+                  get "/api/v1/users/#{client_user.id}",
+                      headers: { Authorization: "Bearer #{token}" }
                 end
 
-                it "returns a forbidden response" do
+                it 'returns a forbidden response' do
                   expect(response).to have_http_status(:forbidden)
                 end
               end
@@ -298,10 +321,10 @@ module Api
 
             context 'when user is not found' do
               before do
-                get "/api/v1/users/any_invalid_id"
+                get '/api/v1/users/any_invalid_id'
               end
-        
-              it "returns a not found response" do
+
+              it 'returns a not found response' do
                 expect(response).to have_http_status(:not_found)
               end
             end
@@ -315,7 +338,7 @@ module Api
             get "/api/v1/users/#{unlogged_user.id}"
           end
 
-          it "returns a success response" do
+          it 'returns a success response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -327,12 +350,14 @@ module Api
           let(:token) { SecureRandom.hex(20) }
           let(:validation_type) { 'registration' }
           let(:inactive_user) { create(:user, status: :inactive) }
-          let(:activate_params) { { token:, validation_type:} }
+          let(:activate_params) { { token:, validation_type: } }
 
           before do
-            create(:validation, token:, user_id: inactive_user.id, validation_type:)
+            create(:validation, token:, user_id: inactive_user.id,
+                                validation_type:)
 
-            put "/api/v1/users/#{inactive_user.id}/activate", params: activate_params
+            put "/api/v1/users/#{inactive_user.id}/activate",
+                params: activate_params
           end
 
           it 'updates user status to active' do
@@ -349,13 +374,14 @@ module Api
             let(:token) { SecureRandom.hex(20) }
             let(:validation_type) { 'registration' }
             let(:inactive_user) { create(:user, status: :inactive) }
-            let(:activate_params) { { token:, validation_type:} }
+            let(:activate_params) { { token:, validation_type: } }
 
             before do
-              put "/api/v1/users/#{inactive_user.id}/activate", params: activate_params
+              put "/api/v1/users/#{inactive_user.id}/activate",
+                  params: activate_params
             end
 
-            it "returns a not found response" do
+            it 'returns a not found response' do
               expect(response).to have_http_status(:not_found)
             end
           end
@@ -365,19 +391,26 @@ module Api
       describe 'POST password_recovery' do
         context 'when user is found' do
           let(:user) { create(:user) }
-          let(:password_recovery_params) { { email_address: user.email_address} }
-          let(:user_password_recovery_mailer) { double('UserPasswordRecoveryMailer') }
+          let(:password_recovery_params) do
+            { email_address: user.email_address }
+          end
+          let(:user_password_recovery_mailer) do
+            double('UserPasswordRecoveryMailer')
+          end
 
           before do
-            expect(UserPasswordRecoveryMailer).to receive(:send_email).and_return(user_password_recovery_mailer)
-            expect(user_password_recovery_mailer).to receive(:deliver_now).and_return(true)
+            expect(UserPasswordRecoveryMailer).to receive(:send_email)
+              .and_return(user_password_recovery_mailer)
+            expect(user_password_recovery_mailer).to receive(:deliver_now)
+              .and_return(true)
           end
 
           context 'when validation is found' do
             before do
               create(:validation, user:, validation_type: 1, status: 0)
 
-              post "/api/v1/users/password_recovery", params: password_recovery_params
+              post '/api/v1/users/password_recovery',
+                   params: password_recovery_params
             end
 
             it 'sends password recovery email to user' do
@@ -391,7 +424,8 @@ module Api
 
           context 'when validation is not found' do
             before do
-              post "/api/v1/users/password_recovery", params: password_recovery_params
+              post '/api/v1/users/password_recovery',
+                   params: password_recovery_params
             end
 
             it 'sends password recovery email to user' do
@@ -405,10 +439,10 @@ module Api
 
         context 'when user is not found' do
           before do
-            post "/api/v1/users/password_recovery"
+            post '/api/v1/users/password_recovery'
           end
 
-          it "returns a not found response" do
+          it 'returns a not found response' do
             expect(response).to have_http_status(:not_found)
           end
         end
@@ -417,8 +451,8 @@ module Api
       describe 'PUT update_password' do
         context 'when validation is found' do
           let(:user) { create(:user) }
-          let(:token) { 'any_token'}
-          let(:password) { 'new_password'}
+          let(:token) { 'any_token' }
+          let(:password) { 'new_password' }
           let(:update_password_params) do
             {
               user_id: user.id,
@@ -428,9 +462,13 @@ module Api
           end
 
           before do
-            create(:validation, user:, validation_type: 'password_recovery', status: 'pending')
+            create(:validation,
+                   user:,
+                   validation_type: 'password_recovery',
+                   status: 'pending')
 
-            put "/api/v1/users/#{user.id}/update_password", params: update_password_params
+            put "/api/v1/users/#{user.id}/update_password",
+                params: update_password_params
           end
 
           it 'updates user password' do
@@ -443,8 +481,8 @@ module Api
 
         context 'when validation is not found' do
           let(:user) { create(:user) }
-          let(:token) { 'any_token'}
-          let(:password) { 'new_password'}
+          let(:token) { 'any_token' }
+          let(:password) { 'new_password' }
           let(:update_password_params) do
             {
               user_id: user.id,
@@ -454,10 +492,11 @@ module Api
           end
 
           before do
-            put "/api/v1/users/#{user.id}/update_password", params: update_password_params
+            put "/api/v1/users/#{user.id}/update_password",
+                params: update_password_params
           end
 
-          it "returns a not found response" do
+          it 'returns a not found response' do
             expect(response).to have_http_status(:not_found)
           end
         end

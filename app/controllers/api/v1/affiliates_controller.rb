@@ -41,7 +41,7 @@ module Api
       end
 
       def admin?
-        return if current_user.admin?
+        return false if current_user.admin?
 
         raise ForbiddenError
       end

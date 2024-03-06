@@ -6,7 +6,8 @@ module Api
       include Concerns::UserContext
 
       before_action :set_resource, only: %i[show update]
-      before_action :user_authenticate?, :allow_access?, except: %i[activate password_recovery update_password]
+      before_action :user_authenticate?, :allow_access?,
+                    except: %i[activate password_recovery update_password]
 
       def show
         return raise ForbiddenError unless user_has_permission?
@@ -22,7 +23,9 @@ module Api
         return raise ForbiddenError unless user_has_permission?
 
         @model.update!(permitted_params.reject { |_, value| value.blank? })
-        @model.profile.update!(profile_params) if @model.profile && profile_params
+        if @model.profile && profile_params
+          @model.profile.update!(profile_params)
+        end
 
         render json: @model
       end
@@ -42,7 +45,9 @@ module Api
       end
 
       def password_recovery
-        @model = User.find_by!(email_address: password_recovery_params[:email_address])
+        @model = User.find_by!(
+          email_address: password_recovery_params[:email_address]
+        )
         @model.validations.where(validation_type: 1).tap do |validation|
           validation.update!(status: 1)
         end

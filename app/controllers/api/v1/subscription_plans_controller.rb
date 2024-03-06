@@ -21,7 +21,8 @@ module Api
       end
 
       def permitted_params
-        params.require(:subscription_plan).permit(:name, :description, :activation_months, :price)
+        params.require(:subscription_plan)
+              .permit(:name, :description, :activation_months, :price)
       end
     end
   end

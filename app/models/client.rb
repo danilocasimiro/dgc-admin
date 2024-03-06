@@ -9,7 +9,9 @@ class Client < ApplicationRecord
 
   validates_presence_of :name
 
-  scope :with_company_id, ->(company_id) { joins(:company_clients).where(company_clients: { company_id: }) }
+  scope :with_company_id, lambda { |company_id|
+    joins(:company_clients).where(company_clients: { company_id: })
+  }
 
   def associate_with_company(company_id)
     CompanyClient.create!(client_id: id, company_id:)

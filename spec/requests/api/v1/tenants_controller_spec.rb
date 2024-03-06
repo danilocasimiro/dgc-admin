@@ -19,14 +19,15 @@ module Api
             before do
               create_list(:tenant, 4)
 
-              get '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/tenants',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(4)
             end
@@ -39,14 +40,15 @@ module Api
               create_list(:tenant, 4)
               create_list(:tenant, 3, affiliate: user.profile)
 
-              get '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/tenants',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(3)
             end
@@ -58,10 +60,11 @@ module Api
             before do
               create_list(:tenant, 3)
 
-              get '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/tenants',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -72,10 +75,11 @@ module Api
             before do
               create_list(:tenant, 3)
 
-              get '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/tenants',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -86,7 +90,7 @@ module Api
             get '/api/v1/tenants'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -102,18 +106,24 @@ module Api
             context 'when a tenant is successfully created' do
               let(:user) { create(:affiliate_user) }
               let(:tenant_params) { attributes_for(:tenant) }
-              let(:user_registration_mailer) { double('UserRegistrationMailer') }
-              let(:user_data) do 
-                { 
-                  email_address: 'any_email@example.com', password: 'any_password'
+              let(:user_registration_mailer) do
+                double('UserRegistrationMailer')
+              end
+              let(:user_data) do
+                {
+                  email_address: 'email@example.com', password: 'any_password'
                 }
               end
 
               before do
-                expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-                expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+                expect(UserRegistrationMailer).to receive(:send_email)
+                  .and_return(user_registration_mailer)
+                expect(user_registration_mailer).to receive(:deliver_now)
+                  .and_return(true)
 
-                post '/api/v1/tenants', params: { tenant: tenant_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+                post '/api/v1/tenants',
+                     params: { tenant: tenant_params, user: user_data },
+                     headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'creates a new tenant' do
@@ -127,8 +137,8 @@ module Api
             context 'when a tenant is not created successfully' do
               let(:user) { create(:affiliate_user) }
               let(:tenant_params) { attributes_for(:tenant) }
-              let(:user_data) do 
-                { 
+              let(:user_data) do
+                {
                   email_address: 'invalid_email', password: 'any_password'
                 }
               end
@@ -138,7 +148,8 @@ module Api
               end
 
               it 'returns a bad request response' do
-                post '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+                post '/api/v1/tenants',
+                     headers: { Authorization: "Bearer #{token}" }
 
                 expect(response).to have_http_status(:bad_request)
               end
@@ -149,17 +160,21 @@ module Api
             let(:user) { create(:user) }
             let(:tenant_params) { attributes_for(:tenant) }
             let(:user_registration_mailer) { double('UserRegistrationMailer') }
-            let(:user_data) do 
-              { 
+            let(:user_data) do
+              {
                 email_address: 'any_email@example.com', password: 'any_password'
               }
             end
 
             before do
-              expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-              expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+              expect(UserRegistrationMailer).to receive(:send_email)
+                .and_return(user_registration_mailer)
+              expect(user_registration_mailer).to receive(:deliver_now)
+                .and_return(true)
 
-              post '/api/v1/tenants', params: { tenant: tenant_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/tenants',
+                   params: { tenant: tenant_params, user: user_data },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new tenant' do
@@ -174,7 +189,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/tenants',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -184,7 +200,8 @@ module Api
             let(:user) { create(:tenant_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/tenants', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/tenants',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -196,7 +213,7 @@ module Api
             post '/api/v1/tenants'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -217,7 +234,9 @@ module Api
               let(:tenant) { user.profile }
 
               before do
-                put "/api/v1/tenants/#{tenant.id}", params: { tenant: tenant_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/tenants/#{tenant.id}",
+                    params: { tenant: tenant_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new tenant' do
@@ -233,8 +252,9 @@ module Api
               let(:tenant_params) { { name: 'new_name' } }
 
               it 'returns a forbidden response' do
-                put "/api/v1/tenants/#{tenant.id}", headers: { 'Authorization': "Bearer #{token}" }
-      
+                put "/api/v1/tenants/#{tenant.id}",
+                    headers: { Authorization: "Bearer #{token}" }
+
                 expect(response).to have_http_status(:forbidden)
               end
             end
@@ -244,7 +264,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/tenants/#{tenant.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/tenants/#{tenant.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -254,7 +275,8 @@ module Api
             let(:user) { create(:affiliate_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/tenants/#{tenant.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/tenants/#{tenant.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -265,7 +287,9 @@ module Api
             let(:tenant_params) { { name: 'new_name' } }
 
             before do
-              put "/api/v1/tenants/#{tenant.id}", params: { tenant: tenant_params }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/tenants/#{tenant.id}",
+                  params: { tenant: tenant_params },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new tenant' do
@@ -282,7 +306,7 @@ module Api
             put "/api/v1/tenants/#{tenant.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

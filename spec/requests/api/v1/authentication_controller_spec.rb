@@ -16,8 +16,9 @@ module Api
             let(:status) { 'active' }
 
             before do
-              expect(Concerns::JwtToken).to receive(:generate_token).with(user).and_return(token)
-              post '/api/v1/authenticate', params: {  email_address:, password: }
+              expect(Concerns::JwtToken).to receive(:generate_token).with(user)
+                                        .and_return(token)
+              post '/api/v1/authenticate', params: { email_address:, password: }
             end
 
             it 'generates a new token' do
@@ -31,15 +32,21 @@ module Api
             let(:user_registration_mailer) { double('UserRegistrationMailer') }
 
             before do
-              expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-              expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+              expect(UserRegistrationMailer).to receive(:send_email)
+                .and_return(user_registration_mailer)
+              expect(user_registration_mailer).to receive(:deliver_now)
+                .and_return(true)
 
-              post '/api/v1/authenticate', params: {  email_address:, password:}
+              post '/api/v1/authenticate',
+                   params: { email_address:, password: }
             end
 
-            it "returns a unauthorized response" do
+            it 'returns a unauthorized response' do
               expect(response).to have_http_status(:unauthorized)
-              expect(response.body).to include("Usuário inativo. Um novo email foi encaminhado para #{user.email_address} para realizar a ativação de sua conta.")
+              expect(response.body).to include(
+                `Usuário inativo. Um novo email foi encaminhado para
+                #{user.email_address} para realizar a ativação de sua conta.`
+              )
             end
           end
         end
@@ -49,19 +56,21 @@ module Api
           let(:email_address) { 'email@example.com' }
 
           before do
-            post '/api/v1/authenticate', params: {  email_address:, password:}
+            post '/api/v1/authenticate',
+                 params: { email_address:, password: }
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
-            expect(response.body).to include("Credenciais inválidas.")
+            expect(response.body).to include('Credenciais inválidas.')
           end
         end
       end
 
       describe 'POST #logout_company_auth' do
         before do
-          post '/api/v1/authenticate/logout_company_auth', headers: { 'Authorization': "Bearer #{token}" }
+          post '/api/v1/authenticate/logout_company_auth',
+               headers: { Authorization: "Bearer #{token}" }
         end
 
         context 'when token is valid' do
@@ -77,9 +86,9 @@ module Api
         context 'when token is invalid' do
           let(:token) { 'any_invalid_token' }
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
-            expect(response.body).to include("Necessário autenticação")
+            expect(response.body).to include('Necessário autenticação')
           end
         end
       end
@@ -98,7 +107,8 @@ module Api
             let(:company) { create(:company, tenant: user.profile) }
 
             before do
-              post "/api/v1/authenticate/company_auth/#{company.id}", headers: { 'Authorization': "Bearer #{token}" }
+              post "/api/v1/authenticate/company_auth/#{company.id}",
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'generates a new token' do
@@ -110,10 +120,11 @@ module Api
             let(:company) { create(:company) }
 
             before do
-              post "/api/v1/authenticate/company_auth/#{company.id}", headers: { 'Authorization': "Bearer #{token}" }
+              post "/api/v1/authenticate/company_auth/#{company.id}",
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a not found response" do
+            it 'returns a not found response' do
               expect(response).to have_http_status(:not_found)
             end
           end
@@ -124,7 +135,7 @@ module Api
             post '/api/v1/authenticate/company_auth/123'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

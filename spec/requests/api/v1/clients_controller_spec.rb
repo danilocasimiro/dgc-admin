@@ -20,10 +20,11 @@ module Api
             before do
               create_list(:client, 3)
 
-              get '/api/v1/clients', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/clients',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -35,14 +36,15 @@ module Api
               create_list(:client, 3)
               create_list(:company_client, 5, company:)
 
-              get '/api/v1/clients', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/clients',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(5)
             end
@@ -55,14 +57,15 @@ module Api
               create_list(:client, 3)
               create_list(:company_client, 5, company:)
 
-              get '/api/v1/clients', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/clients',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(5)
             end
@@ -74,7 +77,7 @@ module Api
             get '/api/v1/clients'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -91,17 +94,25 @@ module Api
             let(:client_params) { attributes_for(:client) }
             let(:address_params) { attributes_for(:address) }
             let(:user_registration_mailer) { double('UserRegistrationMailer') }
-            let(:user_data) do 
-              { 
+            let(:user_data) do
+              {
                 email_address: 'any_email@example.com', password: 'any_password'
               }
             end
 
             before do
-              expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-              expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+              expect(UserRegistrationMailer).to receive(:send_email)
+                .and_return(user_registration_mailer)
+              expect(user_registration_mailer).to receive(:deliver_now)
+                .and_return(true)
 
-              post '/api/v1/clients', params: { client: client_params, address: address_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/clients',
+                   params: {
+                     client: client_params,
+                     address: address_params,
+                     user: user_data
+                   },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new client' do
@@ -119,17 +130,25 @@ module Api
             let(:client_params) { attributes_for(:client) }
             let(:address_params) { attributes_for(:address) }
             let(:user_registration_mailer) { double('UserRegistrationMailer') }
-            let(:user_data) do 
-              { 
+            let(:user_data) do
+              {
                 email_address: 'any_email@example.com', password: 'any_password'
               }
             end
 
             before do
-              expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-              expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+              expect(UserRegistrationMailer).to receive(:send_email)
+                .and_return(user_registration_mailer)
+              expect(user_registration_mailer).to receive(:deliver_now)
+                .and_return(true)
 
-              post '/api/v1/clients', params: { client: client_params, address: address_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/clients',
+                   params: {
+                     client: client_params,
+                     address: address_params,
+                     user: user_data
+                   },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new client' do
@@ -146,7 +165,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/clients', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/clients',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -158,7 +178,7 @@ module Api
             post '/api/v1/clients'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -180,7 +200,13 @@ module Api
             let(:user_data) { { email_address: 'any_email@example.com' } }
 
             before do
-              put "/api/v1/clients/#{client.id}", params: { client: client_params, address: address_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/clients/#{client.id}",
+                  params: {
+                    client: client_params,
+                    address: address_params,
+                    user: user_data
+                  },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new client' do
@@ -200,7 +226,13 @@ module Api
             let(:user_data) { { email_address: 'any_email@example.com' } }
 
             before do
-              put "/api/v1/clients/#{client.id}", params: { client: client_params, address: address_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/clients/#{client.id}",
+                  params: {
+                    client: client_params,
+                    address: address_params,
+                    user: user_data
+                  },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new client' do
@@ -217,7 +249,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/clients/#{client.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/clients/#{client.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -229,7 +262,7 @@ module Api
             put "/api/v1/clients/#{client.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

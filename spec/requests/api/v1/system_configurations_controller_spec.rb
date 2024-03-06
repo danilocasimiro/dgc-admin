@@ -15,7 +15,8 @@ module Api
             let(:user) { create(:tenant_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/system_configurations/#{system_configuration.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/system_configurations/#{system_configuration.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -25,7 +26,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/system_configurations/#{system_configuration.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/system_configurations/#{system_configuration.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -36,12 +38,16 @@ module Api
             let(:system_configuration_params) { { maintenance_mode: true } }
 
             before do
-              put "/api/v1/system_configurations/#{system_configuration.id}", params: { system_configuration: system_configuration_params }, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/system_configurations/#{system_configuration.id}",
+                  params: { system_configuration: system_configuration_params },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new system_configuration' do
               expect(response).to have_http_status(:ok)
-              expect(response.body).to include(system_configuration_params[:maintenance_mode].to_s)
+              expect(response.body).to include(
+                system_configuration_params[:maintenance_mode].to_s
+              )
               system_configuration.reload
               expect(system_configuration.maintenance_mode).to eq(true)
             end
@@ -53,7 +59,7 @@ module Api
             put "/api/v1/system_configurations/#{system_configuration.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -68,7 +74,8 @@ module Api
               let(:user) { create(:tenant_user) }
 
               before do
-                get "/api/v1/system_configurations/#{system_configuration.id}", headers: { 'Authorization': "Bearer #{token}" }
+                get "/api/v1/system_configurations/#{system_configuration.id}",
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'show a system configuration' do
@@ -80,7 +87,8 @@ module Api
               let(:user) { create(:employee_user) }
 
               before do
-                get "/api/v1/system_configurations/#{system_configuration.id}", headers: { 'Authorization': "Bearer #{token}" }
+                get "/api/v1/system_configurations/#{system_configuration.id}",
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'show a system configuration' do
@@ -92,13 +100,18 @@ module Api
               let(:user) { create(:user) }
 
               before do
-                get "/api/v1/system_configurations/#{system_configuration.id}", headers: { 'Authorization': "Bearer #{token}" }
+                get "/api/v1/system_configurations/#{system_configuration.id}",
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'show a system configuration' do
                 expect(response).to have_http_status(:ok)
-                expect(response.body).to include(system_configuration.maintenance_mode.to_s)
-                expect(response.body).to include(system_configuration.grace_period_days.to_s)
+                expect(response.body).to include(
+                  system_configuration.maintenance_mode.to_s
+                )
+                expect(response.body).to include(
+                  system_configuration.grace_period_days.to_s
+                )
               end
             end
           end
@@ -107,10 +120,11 @@ module Api
             let(:user) { create(:user) }
 
             before do
-              get "/api/v1/system_configurations/any_invalid_id", headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/system_configurations/any_invalid_id',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:not_found)
             end
           end
@@ -123,7 +137,7 @@ module Api
             get "/api/v1/system_configurations/#{system_configuration.id}"
           end
 
-          it "returns a success response" do
+          it 'returns a success response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

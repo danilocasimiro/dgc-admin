@@ -12,7 +12,8 @@ class CompanyEmailTemplate < ApplicationRecord
 
   def unique_email_template_company_combination
     if CompanyEmailTemplate.where(email_template_id:, company_id:).exists?
-      errors.add(:base, "Este template de email já está associado a esta empresa")
+      errors
+        .add(:base, 'Este template de email já está associado a esta empresa')
     end
   end
 end

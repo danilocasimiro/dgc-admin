@@ -19,10 +19,11 @@ module Api
             before do
               create_list(:company, 3)
 
-              get '/api/v1/companies', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/companies',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -34,14 +35,15 @@ module Api
               create_list(:company, 3)
               create_list(:company, 5, tenant: user.profile)
 
-              get '/api/v1/companies', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/companies',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(5)
             end
@@ -54,14 +56,15 @@ module Api
               create_list(:company, 3)
               create_list(:company_employee, 4, employee: user.profile)
 
-              get '/api/v1/companies', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/companies',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a success response" do
+            it 'returns a success response' do
               expect(response).to have_http_status(:success)
             end
 
-            it "returns JSON response with paginated models" do
+            it 'returns JSON response with paginated models' do
               expect(response).to be_successful
               expect(JSON.parse(response.body).size).to eq(4)
             end
@@ -73,7 +76,7 @@ module Api
             get '/api/v1/companies'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -91,7 +94,11 @@ module Api
             let(:address_params) { attributes_for(:address) }
 
             before do
-              post '/api/v1/companies', params: { company: company_params, address: address_params }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/companies',
+                   params: {
+                     company: company_params,
+                     address: address_params
+                   }, headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new company' do
@@ -106,7 +113,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/companies', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/companies',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -116,7 +124,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/companies', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/companies',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -128,7 +137,7 @@ module Api
             post '/api/v1/companies'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -152,7 +161,11 @@ module Api
               company.tenant = user.profile
               company.save!
 
-              put "/api/v1/companies/#{company.id}", params: { company: company_params, address: address_params}, headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/companies/#{company.id}",
+                  params: {
+                    company: company_params, address: address_params
+                  },
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'updates a new company' do
@@ -173,7 +186,12 @@ module Api
               before do
                 create(:company_employee, employee: user.profile, company:)
 
-                put "/api/v1/companies/#{company.id}", params: { company: company_params, address: address_params}, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/companies/#{company.id}",
+                    params: {
+                      company: company_params,
+                      address: address_params
+                    },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new company' do
@@ -187,10 +205,15 @@ module Api
 
             context 'when employee has no company association' do
               before do
-                put "/api/v1/companies/#{company.id}", params: { company: company_params, address: address_params}, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/companies/#{company.id}",
+                    params: {
+                      company: company_params,
+                      address: address_params
+                    },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
-              it "returns a not_found response" do
+              it 'returns a not_found response' do
                 expect(response).to have_http_status(:not_found)
               end
             end
@@ -200,7 +223,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/companies/#{company.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/companies/#{company.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -212,7 +236,7 @@ module Api
             put "/api/v1/companies/#{company.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

@@ -9,8 +9,8 @@ class CompanyEmployee < ApplicationRecord
   private
 
   def unique_employee_company_combination
-    if CompanyEmployee.where(employee_id:, company_id:).exists?
-      errors.add(:base, "Este colaborador já está associado a esta empresa")
-    end
+    return unless CompanyEmployee.where(employee_id:, company_id:).exists?
+
+    errors.add(:base, 'Este colaborador já está associado a esta empresa')
   end
 end

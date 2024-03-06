@@ -21,10 +21,11 @@ module Api
             before do
               create_list(:employee, 1)
 
-              get '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+              get '/api/v1/employees',
+                  headers: { Authorization: "Bearer #{token}" }
             end
 
-            it "returns a forbidden response" do
+            it 'returns a forbidden response' do
               expect(response).to have_http_status(:forbidden)
             end
           end
@@ -36,19 +37,20 @@ module Api
             before do
               create(:employee, tenant_id: user.profile.id)
               create(:employee, tenant_id: user.profile.id)
-              create(:company_employee, employee: employee, company:)
+              create(:company_employee, employee:, company:)
             end
 
             context 'when user is logged in company' do
               before do
-                get '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+                get '/api/v1/employees',
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
-              it "returns a success response" do
+              it 'returns a success response' do
                 expect(response).to have_http_status(:success)
               end
 
-              it "returns JSON response with paginated models" do
+              it 'returns JSON response with paginated models' do
                 expect(response).to be_successful
                 expect(JSON.parse(response.body).size).to eq(1)
               end
@@ -58,14 +60,15 @@ module Api
               let(:company_id) { nil }
 
               before do
-                get '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+                get '/api/v1/employees',
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
-              it "returns a success response" do
+              it 'returns a success response' do
                 expect(response).to have_http_status(:success)
               end
 
-              it "returns JSON response with paginated models" do
+              it 'returns JSON response with paginated models' do
                 expect(response).to be_successful
                 expect(JSON.parse(response.body).size).to eq(3)
               end
@@ -73,25 +76,28 @@ module Api
           end
 
           context 'when user is a employee' do
-            let(:employee) { create(:employee, tenant_id: user.profile.tenant.id) }
+            let(:employee) do
+              create(:employee, tenant_id: user.profile.tenant.id)
+            end
             let(:user) { create(:employee_user) }
 
             before do
               create(:employee, tenant_id: user.profile.tenant.id)
               create(:employee, tenant_id: user.profile.tenant.id)
-              create(:company_employee, employee: employee, company:)
+              create(:company_employee, employee:, company:)
             end
 
             context 'when user is logged in company' do
               before do
-                get '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+                get '/api/v1/employees',
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
-              it "returns a success response" do
+              it 'returns a success response' do
                 expect(response).to have_http_status(:success)
               end
 
-              it "returns JSON response with paginated models" do
+              it 'returns JSON response with paginated models' do
                 expect(response).to be_successful
                 expect(JSON.parse(response.body).size).to eq(1)
               end
@@ -101,14 +107,15 @@ module Api
               let(:company_id) { nil }
 
               before do
-                get '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+                get '/api/v1/employees',
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
-              it "returns a success response" do
+              it 'returns a success response' do
                 expect(response).to have_http_status(:success)
               end
 
-              it "returns JSON response with paginated models" do
+              it 'returns JSON response with paginated models' do
                 expect(response).to be_successful
                 expect(JSON.parse(response.body).size).to eq(4)
               end
@@ -121,7 +128,7 @@ module Api
             get '/api/v1/employees'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -137,17 +144,21 @@ module Api
             let(:user) { create(:tenant_user) }
             let(:employee_params) { attributes_for(:employee) }
             let(:user_registration_mailer) { double('UserRegistrationMailer') }
-            let(:user_data) do 
-              { 
+            let(:user_data) do
+              {
                 email_address: 'any_email@example.com', password: 'any_password'
               }
             end
 
             before do
-              expect(UserRegistrationMailer).to receive(:send_email).and_return(user_registration_mailer)
-              expect(user_registration_mailer).to receive(:deliver_now).and_return(true)
+              expect(UserRegistrationMailer).to receive(:send_email)
+                .and_return(user_registration_mailer)
+              expect(user_registration_mailer).to receive(:deliver_now)
+                .and_return(true)
 
-              post '/api/v1/employees', params: { employee: employee_params, user: user_data }, headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/employees',
+                   params: { employee: employee_params, user: user_data },
+                   headers: { Authorization: "Bearer #{token}" }
             end
 
             it 'creates a new employee' do
@@ -161,7 +172,8 @@ module Api
             let(:user) { create(:employee_user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/employees',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -171,7 +183,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              post '/api/v1/employees', headers: { 'Authorization': "Bearer #{token}" }
+              post '/api/v1/employees',
+                   headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -183,7 +196,7 @@ module Api
             post '/api/v1/employees'
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end
@@ -191,7 +204,9 @@ module Api
 
       describe 'PUT #update' do
         let(:employee) { create(:employee) }
-        let(:company_employee) { create(:company_employee, employee:, company:) }
+        let(:company_employee) do
+          create(:company_employee, employee:, company:)
+        end
 
         context 'when user is logged in' do
           before do
@@ -204,7 +219,9 @@ module Api
               let(:employee_params) { { name: 'new_name' } }
 
               before do
-                put "/api/v1/employees/#{employee.id}", params: { employee: employee_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/employees/#{employee.id}",
+                    params: { employee: employee_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new employee' do
@@ -218,12 +235,20 @@ module Api
             context 'when companies_params is send' do
               let(:user) { create(:tenant_user) }
               let(:employee_params) { { name: 'new_name' } }
-              let(:companies_params) { [ { id: company.id, tenant_id: user.profile_id } ] }
+              let(:companies_params) do
+                [{ id: company.id, tenant_id: user.profile_id }]
+              end
 
               before do
-                expect(CompanyEmployee).to receive(:create!).with(company_id: company.id.to_s, employee_id: employee.id)
+                expect(CompanyEmployee).to receive(:create!)
+                  .with(company_id: company.id.to_s, employee_id: employee.id)
 
-                put "/api/v1/employees/#{employee.id}", params: { employee: employee_params, companies: companies_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/employees/#{employee.id}",
+                    params: {
+                      employee: employee_params,
+                      companies: companies_params
+                    },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new employee' do
@@ -241,7 +266,9 @@ module Api
               let(:employee_params) { { name: 'new_name' } }
 
               before do
-                put "/api/v1/employees/#{user.profile.id}", params: { employee: employee_params }, headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/employees/#{user.profile.id}",
+                    params: { employee: employee_params },
+                    headers: { Authorization: "Bearer #{token}" }
               end
 
               it 'updates a new employee' do
@@ -257,7 +284,8 @@ module Api
               let(:employee_params) { { name: 'new_name' } }
 
               it 'returns a forbidden response' do
-                put "/api/v1/employees/#{employee.id}", headers: { 'Authorization': "Bearer #{token}" }
+                put "/api/v1/employees/#{employee.id}",
+                    headers: { Authorization: "Bearer #{token}" }
 
                 expect(response).to have_http_status(:forbidden)
               end
@@ -268,7 +296,8 @@ module Api
             let(:user) { create(:user) }
 
             it 'returns a forbidden response' do
-              put "/api/v1/employees/#{employee.id}", headers: { 'Authorization': "Bearer #{token}" }
+              put "/api/v1/employees/#{employee.id}",
+                  headers: { Authorization: "Bearer #{token}" }
 
               expect(response).to have_http_status(:forbidden)
             end
@@ -280,7 +309,7 @@ module Api
             put "/api/v1/employees/#{employee.id}"
           end
 
-          it "returns a unauthorized response" do
+          it 'returns a unauthorized response' do
             expect(response).to have_http_status(:unauthorized)
           end
         end

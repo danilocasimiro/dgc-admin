@@ -25,12 +25,12 @@ RSpec.describe Product do
     end
   end
 
-  describe ".with_company_id" do
+  describe '.with_company_id' do
     let(:company) { product_type.company }
     let(:product_type) { build(:product_type) }
 
-    it "returns products associated with the specified company_id" do
-      associated_products = create_list(:product, 3, product_type: product_type)
+    it 'returns products associated with the specified company_id' do
+      associated_products = create_list(:product, 3, product_type:)
 
       create_list(:product, 2)
 
@@ -39,7 +39,7 @@ RSpec.describe Product do
       expect(products).to match_array(associated_products)
     end
 
-    it "does not return products associated with other company_ids" do
+    it 'does not return products associated with other company_ids' do
       create_list(:product, 3)
 
       products = described_class.with_company_id(company.id)
@@ -48,13 +48,13 @@ RSpec.describe Product do
     end
   end
 
-  describe ".relation_map" do
-    it "returns an array of symbols" do
+  describe '.relation_map' do
+    it 'returns an array of symbols' do
       expect(described_class.relation_map).to be_an(Array)
       expect(described_class.relation_map).to all(be_a(Symbol))
     end
 
-    it "returns expected relation symbols" do
+    it 'returns expected relation symbols' do
       expected_relations = [:product_type]
       expect(described_class.relation_map).to match_array(expected_relations)
     end

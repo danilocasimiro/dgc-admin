@@ -18,9 +18,9 @@ class Subscription < ApplicationRecord
   private
 
   def start_at_cannot_be_greater_than_end_date
-    if end_at && start_at && end_at < start_at
-      errors.add(:end_at, "não pode ser maior que a data de início")
-    end
+    return unless end_at && start_at && end_at < start_at
+
+    errors.add(:end_at, 'não pode ser maior que a data de início')
   end
 
   def add_start_at
@@ -32,7 +32,8 @@ class Subscription < ApplicationRecord
   end
 
   def fetch_activation_months
-    SubscriptionPlan.select(:activation_months).find(subscription_plan_id).activation_months
+    SubscriptionPlan.select(:activation_months)
+                    .find(subscription_plan_id).activation_months
   end
 
   class << self

@@ -6,7 +6,7 @@ RSpec.describe SystemConfiguration do
   subject(:system_configuration) { build(:system_configuration) }
 
   describe 'associations' do
-    it "has one smtp_email_configuration" do
+    it 'has one smtp_email_configuration' do
       is_expected.to respond_to(:smtp_email_configuration)
     end
   end
