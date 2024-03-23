@@ -12,7 +12,6 @@ RSpec.describe Company do
     it { is_expected.to have_many(:employees) }
     it { is_expected.to have_many(:company_clients) }
     it { is_expected.to have_many(:clients) }
-    it { is_expected.to have_many(:product_types) }
     it { is_expected.to have_many(:company_email_templates) }
   end
 

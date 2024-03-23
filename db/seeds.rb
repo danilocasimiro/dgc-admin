@@ -4,9 +4,6 @@ Faker::Config.locale = 'pt-BR'
 
 tenants = []
 companies = []
-product_types = []
-products = []
-
 
 puts 'Iniciado criação de User Admin'
 User.create!(

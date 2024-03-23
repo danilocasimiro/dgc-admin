@@ -10,7 +10,6 @@ class Company < ApplicationRecord
   has_many :employees, through: :companies_employees, dependent: :destroy
   has_many :company_clients, inverse_of: :company, dependent: :destroy
   has_many :clients, through: :company_clients, dependent: :destroy
-  has_many :product_types, inverse_of: :company, dependent: :destroy
   has_many :company_email_templates, inverse_of: :company, dependent: :destroy
 
   validates_presence_of :name

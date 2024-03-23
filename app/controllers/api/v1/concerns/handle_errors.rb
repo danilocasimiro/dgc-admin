@@ -16,9 +16,18 @@ module Api
                       with: :handle_record_not_saved
           rescue_from ForbiddenError, with: :handle_forbidden_error
           rescue_from UnauthorizedError, with: :handle_unauthorized
+          rescue_from NotFoundError, with: :handle_record_not_found
+          rescue_from UnprocessableEntityError,
+                      with: :handle_unprocessable_entity
         end
 
         private
+
+        def handle_unprocessable_entity(exception)
+          error_message = JSON.parse(exception.message)
+          response.headers['X-Error-Message'] = error_message
+          render json: error_message, status: :unprocessable_entity
+        end
 
         def handle_unauthorized(exception)
           error_message = exception.message
