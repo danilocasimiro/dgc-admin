@@ -1,8 +1,18 @@
 # frozen_string_literal: true
 
 class ProductService < BaseService
-  def fetch_products
-    response = client.get("/api/v1/companies/#{company_id}/products")
+  def fetch_products(query_params = {})
+    response = client.get("/api/v1/companies/#{company_id}/products", query_params)
+
+    if response.success?
+      response.body
+    else
+      handle_faraday_error(response)
+    end
+  end
+
+  def fetch_product(product_id, query_params = {})
+    response = client.get("/api/v1/companies/#{company_id}/products/#{product_id}", query_params)
 
     if response.success?
       response.body
