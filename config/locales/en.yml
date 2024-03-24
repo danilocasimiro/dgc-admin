@@ -29,3 +29,5 @@
 
 en:
   hello: "Hello world"
+  authenticate:
+    inactive_user: "Usuário inativo. Um novo email foi encaminhado para %{user_email} para realizar a ativação de sua conta."

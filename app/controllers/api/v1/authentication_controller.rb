@@ -10,9 +10,7 @@ module Api
           render_error('Credenciais inválidas.')
         elsif !@user.active?
           send_email
-          render_error(`Usuário inativo. Um novo email foi encaminhado
-          para #{params[:email_address]} para realizar a ativação
-          de sua conta.`)
+          render_error(I18n.t('authenticate.inactive_user', user_email: params[:email_address]))
         else
           render json: Concerns::JwtToken.generate_token(@user)
         end
