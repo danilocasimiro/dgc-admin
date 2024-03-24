@@ -6,12 +6,35 @@ module Api
       include Concerns::CompanyContext
 
       before_action :user_has_permission?
-      before_action :set_resource, only: %i[show update destroy]
 
       def index
-        @models = model_class.with_company_id(current_company_id)
+        @models = product_type_service.fetch_product_types(params)
 
-        render json: paginate(@models)
+        render json: @models
+      end
+
+      def show
+        @model = product_type_service.fetch_product_type(params[:id], params)
+
+        render json: @model
+      end
+
+      def update
+        @model = product_type_service.update_product_type(params[:id], permitted_params)
+
+        render json: @model
+      end
+
+      def create
+        @model = product_type_service.create_product_type(permitted_params)
+
+        render json: @model
+      end
+
+      def destroy
+        product_type_service.destroy_product_type(params[:id])
+
+        head :ok
       end
 
       private
@@ -22,14 +45,13 @@ module Api
         raise ForbiddenError
       end
 
-      def set_resource
-        @model =
-          model_class.with_company_id(current_company_id).find(params[:id])
-      end
-
       def permitted_params
         params.require(:product_type).permit(:name)
               .merge(company_id: current_company_id)
+      end
+
+      def product_type_service
+        ProductTypeService.new(current_company_id, request.headers['Authorization'])
       end
     end
   end

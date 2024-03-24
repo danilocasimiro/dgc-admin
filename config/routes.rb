@@ -22,7 +22,7 @@ Rails.application.routes.draw do
         end
         resources :subscriptions, only: %i[index create update]
         resources :companies, except: %i[new edit]
-        resources :affiliates, except: %i[destroy]
+        resources :affiliates
         resources :clients, except: %i[new edit]
         resources :product_types, except: %i[new edit]
         resources :products, except: %i[new edit]

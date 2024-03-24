@@ -6,7 +6,7 @@ module Api
       include Concerns::UserContext
 
       before_action :user_has_permission?, except: :index
-      before_action :set_resource, only: %i[show update]
+      before_action :set_resource, only: %i[destroy show update]
 
       def index
         @models = model_class.all

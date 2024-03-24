@@ -6,7 +6,7 @@ module Api
       include Concerns::UserContext
 
       before_action :admin?, only: %i[create index]
-      before_action :set_resource, only: %i[show update]
+      before_action :set_resource, only: %i[destroy show update]
 
       def index
         @models = model_class.all

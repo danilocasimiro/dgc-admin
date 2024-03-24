@@ -8,9 +8,7 @@ module Api
       before_action :set_resource, only: %i[show destroy update]
 
       def index
-        unless current_user.tenant? || current_user.employee?
-          raise ForbiddenError
-        end
+        raise ForbiddenError unless current_user.tenant? || current_user.employee?
 
         @models = current_user.profile.companies
 
@@ -24,6 +22,7 @@ module Api
           permitted_params.merge(tenant_id: current_user.profile_id)
         )
         store_address
+        store_company_in_external_app
 
         render json: @model
       end
@@ -38,15 +37,21 @@ module Api
       private
 
       def set_resource
-        unless current_user.tenant? || current_user.employee?
-          raise ForbiddenError
-        end
+        raise ForbiddenError unless current_user.tenant? || current_user.employee?
 
         @model = current_user.profile.companies.find(params[:id])
       end
 
       def permitted_params
         params.require(:company).permit(:name)
+      end
+
+      def store_company_in_external_app
+        company_service.create_company(owner_id: @model.id)
+      end
+
+      def company_service
+        CompanyService.new(current_company_id, request.headers['Authorization'])
       end
     end
   end

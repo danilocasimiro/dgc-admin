@@ -8,9 +8,15 @@ module Api
       before_action :user_has_permission?
 
       def index
-        @models = product_service.fetch_products
+        @models = product_service.fetch_products(params)
 
         render json: @models
+      end
+
+      def show
+        @model = product_service.fetch_product(params[:id], params)
+
+        render json: @model
       end
 
       def update
