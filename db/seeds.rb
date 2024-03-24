@@ -230,24 +230,17 @@ puts 'Iniciado criação do menu'
     icon: nil,
     users_allowed: :admin
   )
-  menu_template = Menu.create!(
+  menu_email = Menu.create!(
     parent_id: nil,
-    label: 'Template',
+    label: 'Template de Emails',
     link: '#',
     icon: 'bx bxs-book-bookmark',
     users_allowed: :admin
   )
-  sub_menu_email= Menu.create!(
-    parent_id: menu_template.id,
-    label: 'Emails',
-    link: '#',
-    icon: nil,
-    users_allowed: :admin
-  )
   Menu.create!(
-    parent_id: sub_menu_email.id,
+    parent_id: menu_email.id,
     label: 'Listar',
-    link: '/templates/emails/list',
+    link: '/email-templates/list',
     icon: nil,
     users_allowed: :admin
   )

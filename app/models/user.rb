@@ -74,11 +74,11 @@ class User < ApplicationRecord
     tenant? || employee?
   end
 
-  def menu(company = false)
+  def menu(company)
     menu_type = profile_type.nil? ? 'admin' : profile_type.downcase
 
     Menu.where(
-      'users_allowed LIKE ? and company  = ?', "%#{menu_type}%", company
+      'users_allowed LIKE ? and company  = ?', "%#{menu_type}%", !!company
     )
   end
 
