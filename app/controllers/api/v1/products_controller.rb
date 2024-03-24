@@ -8,7 +8,9 @@ module Api
       before_action :user_has_permission?
 
       def index
-        @models = product_service.fetch_products(params)
+        api_response = product_service.fetch_products(params)
+        response.headers['Total-Pages'] = api_response.headers['total-pages']
+        @models = api_response.body
 
         render json: @models
       end
