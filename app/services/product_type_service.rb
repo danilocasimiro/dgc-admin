@@ -5,7 +5,7 @@ class ProductTypeService < BaseService
     response = client.get("/api/v1/companies/#{company_id}/product_types", query_params)
 
     if response.success?
-      response.body
+      response
     else
       handle_faraday_error(response)
     end
