@@ -17,6 +17,7 @@ module Api
           rescue_from ForbiddenError, with: :handle_forbidden_error
           rescue_from UnauthorizedError, with: :handle_unauthorized
           rescue_from NotFoundError, with: :handle_record_not_found
+          rescue_from BadRequestError, with: :handle_bad_request
           rescue_from UnprocessableEntityError,
                       with: :handle_unprocessable_entity
         end
@@ -27,6 +28,12 @@ module Api
           error_message = JSON.parse(exception.message)
           response.headers['X-Error-Message'] = error_message
           render json: error_message, status: :unprocessable_entity
+        end
+
+        def handle_bad_request(exception)
+          error_message = exception.message
+          response.headers['X-Error-Message'] = error_message
+          render json: { error: error_message }, status: :bad_request
         end
 
         def handle_unauthorized(exception)

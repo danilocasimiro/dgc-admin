@@ -47,7 +47,7 @@ module Api
       end
 
       def store_company_in_external_app
-        company_service.create_company(owner_id: @model.id)
+        company_service.create_company(owner_id: @model.id, user_id: current_user.id)
       end
 
       def company_service

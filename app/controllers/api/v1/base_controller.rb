@@ -35,6 +35,7 @@ module Api
       def create_user
         user = @model.build_user(user_params.reject { |_, value| value.blank? })
         user.save!
+        store_user_in_external_service(user.id)
       end
 
       def update_user
@@ -87,6 +88,14 @@ module Api
 
       def user_has_permission?
         current_user.admin? || current_user.profile_id == params[:id].to_i
+      end
+
+      def store_user_in_external_service(user_id)
+        user_service.create_user(owner_id: user_id)
+      end
+
+      def user_service
+        UserService.new(current_company_id, request.headers['Authorization'])
       end
     end
   end

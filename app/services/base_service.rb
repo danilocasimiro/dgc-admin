@@ -23,6 +23,8 @@ class BaseService
       raise UnprocessableEntityError, response.body
     when 404
       raise NotFoundError
+    when 400
+      raise BadRequestError
     end
   end
 end
